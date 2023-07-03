@@ -11,13 +11,12 @@ class DetallePlanillaController extends Controller
 
         $tipoarchivo=$request->file;
 
-       // $path = $request->file('file')->store('public');
+       $path = $request->file('file')->store('public');
 
         return response()->json([
-            'status' => false,
-            'message' => 'hola',
-            'tipo'=> $tipoarchivo
-        ], 500);
+            'status' => true,
+            'message' => 'Copiado Satisfactoriamente',
+        ], 200);
     }
     
     public function index()

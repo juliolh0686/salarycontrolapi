@@ -16,11 +16,14 @@ return new class extends Migration
             $table->string('p_a_paterno',60);
             $table->string('p_a_materno',60);
             $table->string('p_nombres',60);
-            $table->char('p_sexo',1);
+            $table->integer('sexo_p_sexo');
             $table->date('p_fech_nac');
             $table->char('p_tip_doc',1);
             $table->string('p_num_doc',10);
             $table->timestamps();
+
+            //Relation
+            $table->foreign('sexo_p_sexo')->references('s_id')->on('sexo');
         });
     }
 
