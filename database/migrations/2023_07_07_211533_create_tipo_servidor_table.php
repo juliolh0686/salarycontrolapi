@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sexo', function (Blueprint $table) {
-            $table->integer('s_id')->primary();
-            $table->string('s_sexo',10);
+        Schema::create('tipo_servidor', function (Blueprint $table) {
+            $table->integer('ts_id')->primary();
+            $table->string('ts_tipo_servidor',45);
+            $table->integer('clasificador_cl_id');
             $table->timestamps();
+
+            //Relation
+            $table->foreign('clasificador_cl_id')->references('cl_id')->on('clasificador');
         });
     }
 
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sexo');
+        Schema::dropIfExists('tipo_servidor');
     }
 };

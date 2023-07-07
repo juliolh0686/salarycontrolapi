@@ -3,20 +3,33 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Tipodocumento;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
+   
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        //Realizar la Carga de Base de Datos por Defecto
+        $this->call([
+            SexoSeeder::class,
+            TipodocumentoSeeder::class,
+            SituacionpersonalSeeder::class,
+            NacionalidadSeeder::class,
+            NecSeeder::class,
+            SecuenciafuncionalSeeder::class,
+            NivelSeeder::class,
+            EstablecimientoSeeder::class,
+            ClasificadorSeeder::class,
+            TiposervidorSeeder::class,
+            CargoSeeder::class,
+            RegimenpensionSeeder::class,
+            AdminpensionSeeder::class,
+            RegimenlaboralSeeder::class,
+            EstadoplanillaSeeder::class,
+            TipoplanillaSeeder::class
+        ]);
     }
 }

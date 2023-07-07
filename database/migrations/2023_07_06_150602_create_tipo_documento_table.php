@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sexo', function (Blueprint $table) {
-            $table->integer('s_id')->primary();
-            $table->string('s_sexo',10);
+        Schema::create('tipo_documento', function (Blueprint $table) {
+            $table->integer('td_id')->primary();
+            $table->string('td_tipo_documento',50);
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sexo');
+        Schema::dropIfExists('tipo_documento');
     }
 };

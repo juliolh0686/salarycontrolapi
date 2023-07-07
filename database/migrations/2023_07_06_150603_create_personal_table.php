@@ -12,18 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('personal', function (Blueprint $table) {
-            $table->char('p_cod_mod ', 10)->primary();
+            $table->char('p_id', 10)->primary();
             $table->string('p_a_paterno',60);
             $table->string('p_a_materno',60);
             $table->string('p_nombres',60);
             $table->integer('sexo_p_sexo');
             $table->date('p_fech_nac');
-            $table->char('p_tip_doc',1);
+            $table->integer('p_tip_doc');
             $table->string('p_num_doc',10);
+            $table->integer('nacionalidad_n_id');
             $table->timestamps();
 
             //Relation
             $table->foreign('sexo_p_sexo')->references('s_id')->on('sexo');
+            $table->foreign('p_tip_doc')->references('td_id')->on('tipo_documento');
+            $table->foreign('nacionalidad_n_id')->references('n_id')->on('nacionalidad');
         });
     }
 

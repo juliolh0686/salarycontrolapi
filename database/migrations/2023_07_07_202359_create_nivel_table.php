@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sexo', function (Blueprint $table) {
-            $table->integer('s_id')->primary();
-            $table->string('s_sexo',10);
+        Schema::create('nivel', function (Blueprint $table) {
+            $table->char('n_id',2)->primary();
+            $table->string('n_nivel',40);
+            $table->integer('sec_cod_sec_fun');
             $table->timestamps();
+
+            //Relation
+            $table->foreign('sec_cod_sec_fun')->references('sf_id')->on('secuencia_funcional');
         });
     }
 
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sexo');
+        Schema::dropIfExists('nivel');
     }
 };
