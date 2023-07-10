@@ -17,7 +17,7 @@ return new class extends Migration
             $table->char('dp_cod_cargo',6);
             $table->integer('situacion_personal_sp_id');
             $table->char('nec_nec_id',2);
-            $table->integer('nivel_n_id');
+            $table->char('nivel_n_id',2);
             $table->char('establecimiento_est_id',8);
             $table->char('dp_plaza',4);
             $table->integer('pd_dias_lab');
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->integer('dp_jor_lab');
             $table->char('cargo_car_id',4);
             $table->integer('regimen_pension_rp_id');
-            $table->integer('p_seg_salud');
+            $table->integer('dp_seg_salud');
             $table->string('dp_num_segsalud',20);
             $table->integer('admin_pension_ap_id');
             $table->char('dp_cuspp',20);
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->string('dp_leyenda_permanente',100);
             $table->integer('regimen_laboral_rl_id');
             $table->integer('dp_horas_adicionales');
-            $table->char('cod_nexus',12);
+            $table->char('dp_cod_nexus',12);
             $table->decimal('dp_bruto',11,2);
             $table->decimal('dp_afecto',11,2);
             $table->decimal('dp_desc',11,2);
@@ -58,6 +58,20 @@ return new class extends Migration
             $table->char('personal_p_id',10);
             $table->integer('tipo_planilla_tp_id');
             $table->timestamps();
+
+            $table->foreign('situacion_personal_sp_id')->references('sp_id')->on('situacion_personal');
+            $table->foreign('nec_nec_id')->references('nec_id')->on('nec');
+            $table->foreign('nivel_n_id')->references('n_id')->on('nivel');
+            $table->foreign('establecimiento_est_id')->references('est_id')->on('establecimiento');
+            $table->foreign('tipo_servidor_ts_id')->references('ts_id')->on('tipo_servidor');
+            $table->foreign('cargo_car_id')->references('car_id')->on('cargo');
+            $table->foreign('regimen_pension_rp_id')->references('rp_id')->on('regimen_pension');
+            $table->foreign('admin_pension_ap_id')->references('ap_id')->on('admin_pension');
+            $table->foreign('regimen_laboral_rl_id')->references('rl_id')->on('regimen_laboral');
+            $table->foreign('planilla_pll_id')->references('pll_id')->on('planilla');
+            $table->foreign('personal_p_id')->references('p_id')->on('personal');
+            $table->foreign('tipo_planilla_tp_id')->references('tp_id')->on('tipo_planilla');
+
         });
     }
 

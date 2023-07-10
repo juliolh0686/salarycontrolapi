@@ -11,10 +11,10 @@ class Personal extends Model
 
     protected $table = 'personal';
 
-    protected $primaryKey='p_cod_mod';
+    protected $primaryKey='p_id';
 
     protected $fillable = [
-      'p_cod_mod',
+      'p_id',
       'p_a_paterno',
       'p_a_materno',
       'p_nombres',
