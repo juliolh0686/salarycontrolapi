@@ -34,12 +34,12 @@ return new class extends Migration
             $table->string('dp_num_segsalud',20);
             $table->integer('admin_pension_ap_id');
             $table->char('dp_cuspp',20);
-            $table->date('dp_fech_afi');
-            $table->date('dp_fech_dev');
+            $table->date('dp_fech_afi')->nullable();
+            $table->date('dp_fech_dev')->nullable();
             $table->integer('dp_tip_encarg');
             $table->char('dp_tipo_plaza',2);
             $table->integer('dp_dias_lic');
-            $table->date('dp_fech_ini_lic');
+            $table->date('dp_fech_ini_lic')->nullable();
             $table->char('dp_cuenta',11);
             $table->string('dp_leyenda_mensual',100);
             $table->string('dp_leyenda_permanente',100);
@@ -52,8 +52,8 @@ return new class extends Migration
             $table->decimal('dp_liquido',11,2);
             $table->decimal('dp_essalud',11,2);
             $table->boolean('dp_noabono');
-            $table->string('dp_motivo_na',200);
-            $table->string('dp_usuario_na',50);
+            $table->string('dp_motivo_na',200)->nullable();
+            $table->string('dp_usuario_na',50)->nullable();
             $table->integer('planilla_pll_id');
             $table->char('personal_p_id',10);
             $table->integer('tipo_planilla_tp_id');

@@ -349,6 +349,18 @@ class EstablecimientoSeeder extends Seeder
         Establecimiento::create(['est_id' => '0H082241','est_establecimiento' => 'APLICACION IPNM']);
         Establecimiento::create(['est_id' => '0H039010','est_establecimiento' => 'NIÑO JESUS DE PRAGA - SAN BORJA']);
         Establecimiento::create(['est_id' => '0H085055','est_establecimiento' => 'C.E.O. SAN ROQUE']);
+        Establecimiento::create(['est_id' => '0H06V005','est_establecimiento' => '02 LAURA ALVA SALDAÑA']);
+        Establecimiento::create(['est_id' => '0H05V015','est_establecimiento' => 'TOÑITO SILVA GUERRERO']);
+        Establecimiento::create(['est_id' => '0H02V320','est_establecimiento' => 'TALENTOSOS SOBRESALIENTES']);
+        Establecimiento::create(['est_id' => '0H04V035','est_establecimiento' => 'ESPECIAL SURQUILLO']);
+        Establecimiento::create(['est_id' => '0H08V025','est_establecimiento' => 'CPAL FERNANDO WISE ESLABA']);
+        Establecimiento::create(['est_id' => '0H06V010','est_establecimiento' => '07 LA INMACULADA']);
+        Establecimiento::create(['est_id' => '0H09V050','est_establecimiento' => 'SANTA ISABEL']);
+        Establecimiento::create(['est_id' => '0H08V060','est_establecimiento' => 'ESPECIAL SURCO']);
+        Establecimiento::create(['est_id' => '0H07V020','est_establecimiento' => '09 SAN FRANCISCO DE ASIS']);
+        Establecimiento::create(['est_id' => '0H034030','est_establecimiento' => 'INSTITUTO PARA NIÑOS EXCEPCIONALES']);
+        Establecimiento::create(['est_id' => '0H033025','est_establecimiento' => 'DIVINA PROVIDENCIA SURQUILLO']);
+
 
     }
 }
