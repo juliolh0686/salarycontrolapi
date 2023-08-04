@@ -13,6 +13,7 @@ class RegimenlaboralSeeder extends Seeder
      */
     public function run(): void
     {
+        Regimenlaboral::create(['rl_id' => 1,'rl_regimen_laboral' => 'LEY N° 24029']);
         Regimenlaboral::create(['rl_id' => 3,'rl_regimen_laboral' => 'DL. N° 276']);
         Regimenlaboral::create(['rl_id' => 6,'rl_regimen_laboral' => 'DL. N° 1153']);
         Regimenlaboral::create(['rl_id' => 8,'rl_regimen_laboral' => 'LEY N° 29944']);

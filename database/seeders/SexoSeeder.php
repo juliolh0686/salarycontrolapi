@@ -22,5 +22,10 @@ class SexoSeeder extends Seeder
             's_id' =>1,
             's_sexo' => 'FEMENINO'
         ]);
+
+        Sexo::create([
+            's_id' =>2,
+            's_sexo' => 'SIN DATOS'
+        ]);
     }
 }

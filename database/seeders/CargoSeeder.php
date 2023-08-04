@@ -92,6 +92,7 @@ class CargoSeeder extends Seeder
         Cargo::create(['car_id' => '0751','car_cargo' => 'PROFESOR.']);
         Cargo::create(['car_id' => '0738','car_cargo' => 'PROF. DE AULA']);
         Cargo::create(['car_id' => '0708','car_cargo' => 'OPERADOR PAD']);
+        Cargo::create(['car_id' => '4000','car_cargo' => 'ASESOR']);
         Cargo::create(['car_id' => '0000','car_cargo' => 'NINGUNO']);
     }
 }

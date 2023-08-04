@@ -29,7 +29,10 @@ class DatabaseSeeder extends Seeder
             AdminpensionSeeder::class,
             RegimenlaboralSeeder::class,
             EstadoplanillaSeeder::class,
-            TipoplanillaSeeder::class
+            TipoplanillaSeeder::class,
+            TipoconceptosSeeder::class,
+            GrupodescuentosSeeder::class,
+            ConceptoSeeder::class
         ]);
     }
 }
