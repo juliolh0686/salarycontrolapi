@@ -201,7 +201,11 @@ class DetallePlanillaController extends Controller
             $detalle_planilla->dp_noabono = 0;
             $detalle_planilla->planilla_pll_id = $id_planilla;
             $detalle_planilla->personal_p_id = $p_id;
-            $detalle_planilla->tipo_planilla_tp_id = 1;
+            if($situacion_personal_sp_id=='55'){
+              $detalle_planilla->tipo_planilla_tp_id = 2;
+            }else {
+              $detalle_planilla->tipo_planilla_tp_id = 1;
+            }
             $detalle_planilla->save();
             
             //Conteo de registros

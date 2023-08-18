@@ -130,6 +130,7 @@ class ConceptoSeeder extends Seeder
         Concepto::create(['con_concepto' =>'+310','con_nombre' => 'B_Ext_Tran_Vari','tipo_conceptos_tc_id'=>1,'grupos_descuentos_gd_id'=>0]);
         Concepto::create(['con_concepto' =>'+323','con_nombre' => 'PSJ','tipo_conceptos_tc_id'=>1,'grupos_descuentos_gd_id'=>10]);
         Concepto::create(['con_concepto' =>'+108','con_nombre' => 'ds065','tipo_conceptos_tc_id'=>1,'grupos_descuentos_gd_id'=>0]);
+        Concepto::create(['con_concepto' =>'+057','con_nombre' => 'vactrunc','tipo_conceptos_tc_id'=>1,'grupos_descuentos_gd_id'=>0]);
 
     }
 }

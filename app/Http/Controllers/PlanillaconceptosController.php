@@ -57,27 +57,47 @@ class PlanillaconceptosController extends Controller
       //Recorro los elementos
       for($registros=0;$registros<$longitud-1;$registros++){
 
-        $pos = strpos($lineas[$registros],'PLANILLA UNICA DE REMUNERACIONES');
+        if($tipo_planilla==3) {
+          $pos = strpos($lineas[$registros],'PLANILLA UNICA DE BENEFICIARIOS');
+        }else {
+          $pos = strpos($lineas[$registros],'PLANILLA UNICA DE REMUNERACIONES');
+        }
         $pos2 = strpos($lineas[$registros],'NOMBRE DEL ESTABLECIMIENTO ');
 
         if($pos === false && $pos2 == false ) {
 
-          //EXTRAER CODIGO MODULAR
-          $cod_mod = substr(ltrim($lineas[$registros]),0,10);
-          //EXTRAER CODIGO CARGO
-          $item_codcargo = strpos($lineas[$registros],"M IMPONIBLE :");
-          $cod_cargo = substr($lineas[$registros],$item_codcargo+24,7);
+          
+          if($tipo_planilla==3) {
+            //EXTRAER CODIGO MODULAR
+            $item_dni = strpos($lineas[$registros],"DNI");
+            $dni = substr($lineas[$registros],$item_dni+5,10);
+            $dni = preg_replace("/[\r\n|\n|\r]+/", "", $dni);
+            $cod_mod = "10".$dni;
+            //EXTRAER CODIGO CARGO
+            $item_codcargo = strpos($lineas[$registros],"M IMPONIB");
+            $cod_cargo = substr($lineas[$registros],$item_codcargo+21,7);
+          }else {
+            //EXTRAER CODIGO MODULAR
+            $cod_mod = substr(ltrim($lineas[$registros]),0,10);
+            //EXTRAER CODIGO CARGO
+            $item_codcargo = strpos($lineas[$registros],"M IMPONIBLE :");
+            $cod_cargo = substr($lineas[$registros],$item_codcargo+24,7);
+          }
+         
+          $cod_mod = str_replace(' ','',$cod_mod);
           $cod_cargo = str_replace(' ','',$cod_cargo);
 
           $cod_registro = $cod_mod.$cod_cargo;
-
+          
           $detalle_planilla = Detalleplanilla::join('planilla','detalle_planilla.planilla_pll_id','=','planilla.pll_id')
             ->join('tipo_servidor','detalle_planilla.tipo_servidor_ts_id','=','tipo_servidor.ts_id')
             ->join('nivel','detalle_planilla.nivel_n_id','=','nivel.n_id')
             ->where('dp_cod_registro','=',$cod_registro)
             ->where('planilla_pll_id','=',$id_planilla)
-            ->where('tipo_planilla_tp_id','=',1)
+            ->where('tipo_planilla_tp_id','=',$tipo_planilla)
             ->first();
+
+          
 
             if(!empty($detalle_planilla)) {
 
@@ -157,6 +177,15 @@ class PlanillaconceptosController extends Controller
                       case '+022':
                         $var_clasificador_con=6;
                         break;
+                      case '+028':
+                        $var_clasificador_con=15;
+                        break;
+                      case '+029':
+                        $var_clasificador_con=20;
+                        break;
+                      case '+032':
+                        $var_clasificador_con=16;
+                        break;
                       case '+206':
                         $var_clasificador_con=3;
                         break;
@@ -175,8 +204,17 @@ class PlanillaconceptosController extends Controller
                       case '+261':
                         $var_clasificador_con=3;
                         break;
+                      case '+262':
+                        $var_clasificador_con=4;
+                        break;
                       case '+271':
                         $var_clasificador_con=3;
+                        break;
+                      case '+276':
+                        $var_clasificador_con=15;
+                        break;
+                      case '+277':
+                        $var_clasificador_con=20;
                         break;
                       case '+301':
                         $var_clasificador_con=16;
