@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Personal;
 use App\Models\Planilla;
 use App\Models\Detalleplanilla;
+use App\Models\Planillaconceptos;
+use Illuminate\Support\Facades\Auth;
 
 class DetallePlanillaController extends Controller
 {
@@ -546,9 +548,99 @@ class DetallePlanillaController extends Controller
     }
 
   
-    public function show(string $id)
+    public function searchNoabono(Request $request)
     {
-        //
+
+      try {
+        
+        $num_doc=$request->num_doc;
+
+        $select_planilla = Planilla::where('estado_planilla_ep_id','=',1)->first();
+        $id_planilla = $select_planilla->pll_id;
+
+        $personal= Personal::join('detalle_planilla','personal.p_id','detalle_planilla.personal_p_id')
+        ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+        ->select('p_id','p_a_paterno','p_a_materno','p_nombres','p_num_doc','dp_id','dp_cod_cargo','cargo_car_id','dp_bruto','dp_afecto','dp_desc','dp_liquido','dp_essalud','dp_noabono','dp_motivo_na')
+        ->where('pll_id','=',$id_planilla)
+        ->where('p_num_doc','=',$num_doc)
+        ->orderBy('p_a_paterno','asc')
+        ->get();
+
+        return response()->json([
+          'status' => true,
+          'message' => 'Reporte Satisfactorio',
+          'personal' => $personal
+        ], 200);
+
+      } catch (\Throwable $th) {
+        return response()->json([
+          'status' => false,
+          'message' => $th->getMessage()
+      ], 500);
+      }
+
+      
+
+    }
+
+    public function addNoabono(Request $request) {
+
+      try {
+
+        $dp_id= $request->dp_id;
+        $dp_motivo_na = $request->dp_motivo_na;
+        $user = 'JULIO';//Auth::user()->name;
+
+        $detalle_planilla=Detalleplanilla::findOrFail($dp_id);
+        $detalle_planilla->dp_noabono=1;
+        $detalle_planilla->dp_motivo_na=$dp_motivo_na;
+        $detalle_planilla->dp_usuario_na=$user;
+        $detalle_planilla->save();
+
+        Planillaconceptos::where('detalle_planilla_dp_id', $dp_id)
+          ->update(['pcon_noabono' => 1]);
+        
+          return response()->json([
+            'status' => true,
+            'message' => 'Registro correcto',
+          ], 200);
+
+      } catch (\Throwable $th) {
+        return response()->json([
+          'status' => false,
+          'message' => $th->getMessage()
+        ], 500);
+      }
+
+    }
+
+    public function removeNoabono(Request $request) {
+
+      try {
+
+        $dp_id= $request->dp_id;
+
+        $detalle_planilla=Detalleplanilla::findOrFail($dp_id);
+        $detalle_planilla->dp_noabono=0;
+        $detalle_planilla->dp_motivo_na='';
+        $detalle_planilla->dp_usuario_na='';
+        $detalle_planilla->save();
+
+        Planillaconceptos::where('detalle_planilla_dp_id', $dp_id)
+          ->update(['pcon_noabono' => 0]);
+        
+          return response()->json([
+            'status' => true,
+            'message' => 'Registro Retirado',
+          ], 200);
+
+      } catch (\Throwable $th) {
+        return response()->json([
+          'status' => false,
+          'message' => $th->getMessage()
+        ], 500);
+      }
+
     }
 
    
