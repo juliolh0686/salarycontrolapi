@@ -529,24 +529,6 @@ class DetallePlanillaController extends Controller
 
       
     }
-    
-    public function index()
-    {
-        //
-    }
-
-    
-    public function create()
-    {
-        //
-    }
-
-    
-    public function store(Request $request)
-    {
-        //
-    }
-
   
     public function searchNoabono(Request $request)
     {
@@ -578,8 +560,6 @@ class DetallePlanillaController extends Controller
           'message' => $th->getMessage()
       ], 500);
       }
-
-      
 
     }
 
@@ -643,21 +623,102 @@ class DetallePlanillaController extends Controller
 
     }
 
-   
-    public function edit(string $id)
-    {
-        //
+    public function periodosNoabono(Request $request) {
+
+      try {
+
+        //SELECT pll_periodo FROM planilla WHERE estado_planilla_ep_id=2 ORDER BY pll_periodo DESC
+
+        $dataPeriodosnoabono = Planilla::select('pll_id','pll_periodo')->where('estado_planilla_ep_id',2)->orderBy('pll_periodo','desc')->get();
+
+        return response()->json([
+          'status' => true,
+          'dataPeriodosnoabono' => $dataPeriodosnoabono,
+          'message' => 'ok'
+        ], 200);
+
+      } catch (\Throwable $th) {
+
+        return response()->json([
+          'status' => false,
+          'message' => $th->getMessage()
+        ], 500);
+
+      }
+      
     }
 
-   
-    public function update(Request $request, string $id)
+    public function mostrarNoabono(Request $request)
     {
-        //
+
+      try {
+        
+        $pll_id=$request->pll_id;
+
+        $personal= Personal::join('detalle_planilla','personal.p_id','detalle_planilla.personal_p_id')
+        ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+        ->select('p_id','p_a_paterno','p_a_materno','p_nombres','p_num_doc','dp_id','dp_cod_cargo','cargo_car_id','dp_bruto','dp_afecto','dp_desc','dp_liquido','dp_essalud','dp_noabono','dp_motivo_na')
+        ->where('pll_id','=',$pll_id)
+        ->where('dp_noabono','=',1)
+        ->orderBy('p_a_paterno','asc')
+        ->get();
+
+        return response()->json([
+          'status' => true,
+          'message' => 'Reporte Satisfactorio',
+          'personal' => $personal
+        ], 200);
+
+      } catch (\Throwable $th) {
+        return response()->json([
+          'status' => false,
+          'message' => $th->getMessage()
+      ], 500);
+      }
+
     }
 
-   
-    public function destroy(string $id)
-    {
-        //
+
+    public function noAbonopdf(Request $request) {
+
+      try {
+
+        $pll_id=$request->pll_id;
+
+        //Data de los conceptos existentes
+        $sqlDataconceptos="SELECT con_id, con_concepto, con_nombre, SUM(pcon_monto) AS monto
+        FROM planilla_conceptos INNER JOIN detalle_planilla on planilla_conceptos.detalle_planilla_dp_id=detalle_planilla.dp_id
+        INNER JOIN planilla on detalle_planilla.planilla_pll_id=planilla.pll_id
+        INNER JOIN conceptos on planilla_conceptos.conceptos_con_id=conceptos.con_id
+        WHERE dp_id IN (SELECT dp_id FROM detalle_planilla WHERE dp_noabono=true)
+        AND tipo_conceptos_tc_id=2 AND pll_id='".$pll_id."' GROUP BY con_id;";
+ 
+        $dataConceptos= DB::select($sqlDataconceptos);
+
+        //Relacion No abono
+        $noAbono = Detalleplanilla::join('personal','detalle_planilla.personal_p_id','personal.p_id')
+        ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+        ->join('nivel','detalle_planilla.nivel_n_id','nivel.n_id')
+        ->join('tipo_servidor','detalle_planilla.tipo_servidor_ts_id','tipo_servidor.ts_id')
+        ->where('dp_noabono', '=', true)
+        ->where('pll_id', '=', $pll_id)
+        ->with('res_conceptos')
+        ->get();
+
+        return response()->json([
+          'status' => true,
+          'message' => 'Reporte Satisfactorio',
+          'dataConceptos' => $dataConceptos,
+          'noAbono' => $noAbono
+        ], 200);
+
+      } catch (\Throwable $th) {
+        return response()->json([
+          'status' => false,
+          'message' => $th->getMessage()
+      ], 500);
+      }
+      
     }
+    
 }

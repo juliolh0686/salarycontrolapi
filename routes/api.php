@@ -27,8 +27,12 @@ Route::post('login', [AuthController::class, 'loginUser']);
 Route::post('detalleplanilla/import149',[DetallePlanillaController::class,'import149'])->name('detalleplanilla.import149');
 Route::post('/planillaconceptos/import002rem',[PlanillaconceptosController::class,'import002rem'])->name('planillaconceptos.import002rem');
 
+//No Abonos
 Route::post('/noabonos/searchnoabono',[DetallePlanillaController::class,'searchNoabono'])->name('noabonos.searchnoabono');
 Route::post('/noabonos/addnoabono',[DetallePlanillaController::class,'addNoabono'])->name('noabonos.addnoabono');
 Route::post('/noabonos/removenoabono',[DetallePlanillaController::class,'removeNoabono'])->name('noabonos.removenoabono');
+Route::post('/noabonos/periodosnoabono',[DetallePlanillaController::class,'periodosNoabono'])->name('noabonos.periodosnoabono');
+Route::post('/noabonos/mostrarnoabono',[DetallePlanillaController::class,'mostrarNoabono'])->name('noabonos.mostrarnoabono');
+Route::post('/noabonos/noabonopdf',[DetallePlanillaController::class,'noAbonopdf'])->name('noabonos.noabonopdf');
 
 Route::middleware('auth:sanctum')->get('/logout', [AuthController::class, 'logout']);

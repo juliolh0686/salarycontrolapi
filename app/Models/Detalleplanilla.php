@@ -63,4 +63,9 @@ class Detalleplanilla extends Model
         'tipo_planilla_tp_id'
     ];
 
+    public function res_conceptos()
+    {
+        return $this->hasMany('App\Models\Planillaconceptos', 'detalle_planilla_dp_id','dp_id')->join('conceptos', 'planilla_conceptos.conceptos_con_id', '=', 'conceptos.con_id');
+    }
+
 }
