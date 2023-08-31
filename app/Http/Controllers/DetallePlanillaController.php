@@ -629,7 +629,7 @@ class DetallePlanillaController extends Controller
 
         //SELECT pll_periodo FROM planilla WHERE estado_planilla_ep_id=2 ORDER BY pll_periodo DESC
 
-        $dataPeriodosnoabono = Planilla::select('pll_id','pll_periodo')->where('estado_planilla_ep_id',2)->orderBy('pll_periodo','desc')->get();
+        $dataPeriodosnoabono = Planilla::select('pll_id','pll_periodo')->orderBy('pll_periodo','desc')->get();
 
         return response()->json([
           'status' => true,
@@ -705,11 +705,66 @@ class DetallePlanillaController extends Controller
         ->with('res_conceptos')
         ->get();
 
+        //DATA REMUNERACION LIQUIDO
+        $sqlDataremuneracion = "SELECT cl_clasificador,sf_secuencia_funcional, NULLIF(SUM(CASE tipo_conceptos_tc_id WHEN 1 THEN pcon_monto END),0) m_bruto,
+        NULLIF(SUM(CASE tipo_conceptos_tc_id WHEN 2 THEN pcon_monto END),0) descuentos,
+        NULLIF(SUM(CASE tipo_conceptos_tc_id WHEN 1 THEN pcon_monto END),0) - NULLIF(SUM(CASE tipo_conceptos_tc_id WHEN 2 THEN pcon_monto END),0) as resta
+        from planilla_conceptos inner join conceptos on planilla_conceptos.conceptos_con_id=conceptos.con_id
+        inner join detalle_planilla on planilla_conceptos.detalle_planilla_dp_id=detalle_planilla.dp_id
+        inner join planilla on detalle_planilla.planilla_pll_id=planilla.pll_id
+        inner join clasificador on planilla_conceptos.clasificador_cl_id=clasificador.cl_id
+        inner join secuencia_funcional on planilla_conceptos.secuencia_funcional_sf_id=secuencia_funcional.sf_id
+        where pll_id='".$pll_id."' and dp_noabono=true and (tipo_conceptos_tc_id=1 or tipo_conceptos_tc_id=2)
+        group by cl_clasificador,sf_secuencia_funcional";
+
+        $dataRemuneracion = DB::select($sqlDataremuneracion);
+
+        //DATA AFP
+        $sqlDataafp = "select rp_admin_pension,cl_clasificador,sf_secuencia_funcional, SUM(pcon_monto) monto
+        from planilla_conceptos inner join conceptos on planilla_conceptos.conceptos_con_id=conceptos.con_id
+        inner join detalle_planilla on planilla_conceptos.detalle_planilla_dp_id=detalle_planilla.dp_id
+        inner join admin_pension on detalle_planilla.admin_pension_ap_id=admin_pension.ap_id
+        inner join planilla on detalle_planilla.planilla_pll_id=planilla.pll_id
+        inner join clasificador on planilla_conceptos.clasificador_cl_id=clasificador.cl_id
+        inner join secuencia_funcional on planilla_conceptos.secuencia_funcional_sf_id=secuencia_funcional.sf_id
+        where pll_id='".$pll_id."' and pcon_noabono=true and con_concepto='-0113'
+        group by rp_admin_pension,cl_clasificador,sf_secuencia_funcional";
+
+        $dataAfp = DB::select($sqlDataafp);
+
+        //DATA ONP
+        $SQLDataonp = "select cl_clasificador,sf_secuencia_funcional,sum(pcon_monto) monto
+        from planilla_conceptos inner join conceptos on planilla_conceptos.conceptos_con_id=conceptos.con_id
+        inner join detalle_planilla on planilla_conceptos.detalle_planilla_dp_id=detalle_planilla.dp_id
+        inner join planilla on detalle_planilla.planilla_pll_id=planilla.pll_id
+        inner join clasificador on planilla_conceptos.clasificador_cl_id=clasificador.cl_id
+        inner join secuencia_funcional on planilla_conceptos.secuencia_funcional_sf_id=secuencia_funcional.sf_id
+        where pll_id='".$pll_id."' and pcon_noabono=true and con_id=53
+        group by cl_clasificador,sf_secuencia_funcional";
+
+        $dataOnp = DB::select($SQLDataonp);
+
+        //DATA ESSALUD
+        $SQLDataessalud = "select cl_clasificador,sf_secuencia_funcional,sum(pcon_monto) monto
+        from planilla_conceptos inner join conceptos on planilla_conceptos.conceptos_con_id=conceptos.con_id
+        inner join detalle_planilla on planilla_conceptos.detalle_planilla_dp_id=detalle_planilla.dp_id
+        inner join planilla on detalle_planilla.planilla_pll_id=planilla.pll_id
+        inner join clasificador on planilla_conceptos.clasificador_cl_id=clasificador.cl_id
+        inner join secuencia_funcional on planilla_conceptos.secuencia_funcional_sf_id=secuencia_funcional.sf_id
+        where pll_id='".$pll_id."' and pcon_noabono=true and con_concepto='essalu'
+        group by cl_clasificador,sf_secuencia_funcional";
+
+        $dataEssalud = DB::select($SQLDataessalud);
+
         return response()->json([
           'status' => true,
           'message' => 'Reporte Satisfactorio',
           'dataConceptos' => $dataConceptos,
-          'noAbono' => $noAbono
+          'noAbono' => $noAbono,
+          'dataRemuneracion' => $dataRemuneracion,
+          'dataAfp' => $dataAfp,
+          'dataEssalud' => $dataEssalud,
+          'dataOnp' => $dataOnp
         ], 200);
 
       } catch (\Throwable $th) {
