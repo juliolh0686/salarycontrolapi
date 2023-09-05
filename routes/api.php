@@ -24,10 +24,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('register', [AuthController::class, 'createUser']);
 Route::post('login', [AuthController::class, 'loginUser']);
+
+//IMPORTACION DE PLANILLA
 Route::post('detalleplanilla/import149',[DetallePlanillaController::class,'import149'])->name('detalleplanilla.import149');
 Route::post('/planillaconceptos/import002rem',[PlanillaconceptosController::class,'import002rem'])->name('planillaconceptos.import002rem');
 
-//No Abonos
+//NO ABONOS
 Route::post('/noabonos/searchnoabono',[DetallePlanillaController::class,'searchNoabono'])->name('noabonos.searchnoabono');
 Route::post('/noabonos/addnoabono',[DetallePlanillaController::class,'addNoabono'])->name('noabonos.addnoabono');
 Route::post('/noabonos/removenoabono',[DetallePlanillaController::class,'removeNoabono'])->name('noabonos.removenoabono');

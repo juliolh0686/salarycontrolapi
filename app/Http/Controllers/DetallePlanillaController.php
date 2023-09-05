@@ -685,6 +685,10 @@ class DetallePlanillaController extends Controller
 
         $pll_id=$request->pll_id;
 
+        //
+
+        $planilla = Planilla::where('pll_id',$pll_id)->first();
+
         //Data de los conceptos existentes
         $sqlDataconceptos="SELECT con_id, con_concepto, con_nombre, SUM(pcon_monto) AS monto
         FROM planilla_conceptos INNER JOIN detalle_planilla on planilla_conceptos.detalle_planilla_dp_id=detalle_planilla.dp_id
@@ -764,7 +768,8 @@ class DetallePlanillaController extends Controller
           'dataRemuneracion' => $dataRemuneracion,
           'dataAfp' => $dataAfp,
           'dataEssalud' => $dataEssalud,
-          'dataOnp' => $dataOnp
+          'dataOnp' => $dataOnp,
+          'planilla' => $planilla
         ], 200);
 
       } catch (\Throwable $th) {
