@@ -666,7 +666,7 @@ class DetallePlanillaController extends Controller
         return response()->json([
           'status' => true,
           'message' => 'Reporte Satisfactorio',
-          'personal' => $personal
+          'personal' => $personal,
         ], 200);
 
       } catch (\Throwable $th) {
@@ -710,9 +710,9 @@ class DetallePlanillaController extends Controller
         ->get();
 
         //DATA REMUNERACION LIQUIDO
-        $sqlDataremuneracion = "SELECT cl_clasificador,sf_secuencia_funcional, NULLIF(SUM(CASE tipo_conceptos_tc_id WHEN 1 THEN pcon_monto END),0) m_bruto,
-        NULLIF(SUM(CASE tipo_conceptos_tc_id WHEN 2 THEN pcon_monto END),0) descuentos,
-        NULLIF(SUM(CASE tipo_conceptos_tc_id WHEN 1 THEN pcon_monto END),0) - NULLIF(SUM(CASE tipo_conceptos_tc_id WHEN 2 THEN pcon_monto END),0) as resta
+        $sqlDataremuneracion = "SELECT cl_clasificador,sf_secuencia_funcional, COALESCE(SUM(CASE tipo_conceptos_tc_id WHEN 1 THEN pcon_monto END),0) m_bruto,
+        COALESCE(SUM(CASE tipo_conceptos_tc_id WHEN 2 THEN pcon_monto END),0) descuentos,
+        COALESCE(SUM(CASE tipo_conceptos_tc_id WHEN 1 THEN pcon_monto END),0) - COALESCE(SUM(CASE tipo_conceptos_tc_id WHEN 2 THEN pcon_monto END),0) as resta
         from planilla_conceptos inner join conceptos on planilla_conceptos.conceptos_con_id=conceptos.con_id
         inner join detalle_planilla on planilla_conceptos.detalle_planilla_dp_id=detalle_planilla.dp_id
         inner join planilla on detalle_planilla.planilla_pll_id=planilla.pll_id
@@ -760,6 +760,17 @@ class DetallePlanillaController extends Controller
 
         $dataEssalud = DB::select($SQLDataessalud);
 
+        $SQLDataquintacat = "select cl_clasificador,sf_secuencia_funcional,sum(pcon_monto) monto
+        from planilla_conceptos inner join conceptos on planilla_conceptos.conceptos_con_id=conceptos.con_id
+        inner join detalle_planilla on planilla_conceptos.detalle_planilla_dp_id=detalle_planilla.dp_id
+        inner join planilla on detalle_planilla.planilla_pll_id=planilla.pll_id
+        inner join clasificador on planilla_conceptos.clasificador_cl_id=clasificador.cl_id
+        inner join secuencia_funcional on planilla_conceptos.secuencia_funcional_sf_id=secuencia_funcional.sf_id
+        where pll_id='".$pll_id."' and pcon_noabono=true and con_concepto='-0121'
+        group by cl_clasificador,sf_secuencia_funcional";
+
+        $dataQuintacat = DB::select($SQLDataquintacat);
+
         return response()->json([
           'status' => true,
           'message' => 'Reporte Satisfactorio',
@@ -769,7 +780,8 @@ class DetallePlanillaController extends Controller
           'dataAfp' => $dataAfp,
           'dataEssalud' => $dataEssalud,
           'dataOnp' => $dataOnp,
-          'planilla' => $planilla
+          'planilla' => $planilla,
+          'dataQuintacat' => $dataQuintacat
         ], 200);
 
       } catch (\Throwable $th) {

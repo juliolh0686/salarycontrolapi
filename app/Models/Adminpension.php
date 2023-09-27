@@ -15,6 +15,7 @@ class Adminpension extends Model
 
     protected $fillable = [
         'ap_id',
-        'rp_admin_pension'
+        'rp_admin_pension',
+        'ap_group'
       ];
 }
