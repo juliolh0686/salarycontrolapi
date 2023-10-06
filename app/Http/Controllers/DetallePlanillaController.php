@@ -10,6 +10,9 @@ use App\Models\Detalleplanilla;
 use App\Models\Planillaconceptos;
 use Illuminate\Support\Facades\Auth;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class DetallePlanillaController extends Controller
 {
     public function import149(Request $request)
@@ -661,13 +664,25 @@ class DetallePlanillaController extends Controller
         ->where('pll_id','=',$pll_id)
         ->where('dp_noabono','=',1)
         ->orderBy('p_a_paterno','asc')
-        ->get();
+        ->paginate(20);
 
-        return response()->json([
-          'status' => true,
-          'message' => 'Reporte Satisfactorio',
-          'personal' => $personal,
-        ], 200);
+        return [
+          'pagination' =>[
+              'total'         => $personal->total(),
+              'current_page'  => $personal->currentPage(),
+              'per_page'      => $personal->perpage(),
+              'last_page'     => $personal->lastPage(),
+              'from'          => $personal->firstItem(),
+              'to'            => $personal->lastItem(),
+          ],
+          'personal' => $personal
+        ];
+
+        // return response()->json([
+        //   'status' => true,
+        //   'message' => 'Reporte Satisfactorio',
+        //   'personal' => $personal,
+        // ], 200);
 
       } catch (\Throwable $th) {
         return response()->json([
@@ -792,5 +807,202 @@ class DetallePlanillaController extends Controller
       }
       
     }
+
+    public function searchAutorizacion(Request $request)
+    {
+
+      try {
+        
+        $num_doc=$request->num_doc;
+
+        $personal= Personal::join('detalle_planilla','personal.p_id','detalle_planilla.personal_p_id')
+        ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+        ->select('p_id','p_a_paterno','p_a_materno','p_nombres','p_num_doc','dp_id','dp_cod_cargo','cargo_car_id','dp_bruto','dp_afecto','dp_desc','dp_liquido','dp_essalud','dp_noabono','dp_motivo_na')
+        ->where('p_num_doc','=',$num_doc)
+        ->orderBy('p_a_paterno','asc')
+        ->get();
+
+        return response()->json([
+          'status' => true,
+          'message' => 'Reporte Satisfactorio',
+          'personal' => $personal
+        ], 200);
+
+      } catch (\Throwable $th) {
+        return response()->json([
+          'status' => false,
+          'message' => $th->getMessage()
+      ], 500);
+      }
+
+    }
+
+    public function autorizacionPdf(Request $request){
+
+      try {
+
+        $num_doc=$request->numDocumento;
+
+         $dataConceptos=Planillaconceptos::join('conceptos','planilla_conceptos.conceptos_con_id','conceptos.con_id')
+            ->join('detalle_planilla','planilla_conceptos.detalle_planilla_dp_id','detalle_planilla.dp_id')
+            ->join('personal','detalle_planilla.personal_p_id','personal.p_id')
+            ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+            ->select('con_id','con_concepto','con_nombre', DB::raw('sum(pcon_monto) as monto'))
+            ->where('p_num_doc', '=', $num_doc)
+            ->where('dp_noabono', '=', 0)
+            ->where('tipo_conceptos_tc_id', '=',2)
+            ->groupBy('con_id','con_concepto','con_nombre')
+            ->get();
+
+
+        $dataAutorizacion=Detalleplanilla::join('personal','detalle_planilla.personal_p_id','personal.p_id')
+          ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+          ->join('nivel','detalle_planilla.nivel_n_id','nivel.n_id')
+          ->join('regimen_pension','detalle_planilla.regimen_pension_rp_id','regimen_pension.rp_id')
+          ->join('tipo_servidor','detalle_planilla.tipo_servidor_ts_id','tipo_servidor.ts_id')
+          ->where('p_num_doc', '=', $num_doc)
+          ->with('res_conceptos')
+          ->where('dp_noabono', '=', false)
+          ->where('tipo_planilla_tp_id','=',1)
+          ->orderBy('pll_periodo','desc')
+          ->take(3)->get();
+
+        return response()->json([
+          'status' => true,
+          'message' => 'Reporte Satisfactorio',
+          'dataautorizacion' => $dataAutorizacion,
+          'dataconceptos' => $dataConceptos
+        ], 200);
+
+      } catch (\Throwable $th) {
+        return response()->json([
+          'status' => false,
+          'message' => $th->getMessage()
+      ], 500);
+      }
+
+  }
+
+  public function afpExcelnominal(Request $request){
+
+    try {
+
+      $num_id = $request->num_id;
+
+      $personal=Detalleplanilla::join('personal','detalle_planilla.personal_p_id','personal.p_id')
+        ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+        ->join('regimen_pension','detalle_planilla.regimen_pension_rp_id','regimen_pension.rp_id')
+        ->join('admin_pension','detalle_planilla.admin_pension_ap_id','admin_pension.ap_id')
+        ->where('pll_id', '=',$num_id)
+        ->where('regimen_pension_rp_id','=',3)
+        ->get();
+
+        $numeracionrem=12;
+        $numeracion = 1;
+        $data=[];
+        
+        $row = [];
+        $row[0] = 'N°';
+        $row[1] = 'ESTADO';
+        $row[2] = 'TIP_DOC';
+        $row[3] = 'DNI';
+        $row[4] = 'COD_MODULAR';
+        $row[5] = 'COD_CARGO';
+        $row[6] = 'AP_PATERNO';
+        $row[7] = 'AP_MATERNO';
+        $row[8] = 'NOMBRES';
+        $row[9] = 'FECHA_INGRESO';
+        $row[10] = 'FECHA_TERMINO';
+        $row[11] = 'ADMIN_PENSION';
+        $row[12] = 'COD_SIS_PEN';
+        $row[13] = 'SIS_PENSION';
+        $row[14] = 'CUSPP';
+        $row[15] = 'SIS_PEN_RES';
+        $row[16] = 'MONTO_AFECTO';
+        $row[17] = 'CLASIFICADOR';
+        $row[18] = 'META';
+        $row[19] = 'CONCEPTO';
+        $row[20] = 'NOM_CONCEPTO';
+        $row[21] = 'MONTO AFP';
+
+        $data[]=$row;
+
+
+            foreach ($personal as $persona){
+
+                $row = [];
+                $row[0] = $numeracion;
+                $row[1] = $persona->situacion_personal_sp_id;
+                $row[2] = $persona->p_tip_doc;
+                $row[3] = $persona->p_num_doc;
+                $row[4] = $persona->p_id;
+                $row[5] = $persona->dp_cod_cargo;
+                $row[6] = $persona->p_a_paterno;
+                $row[7] = $persona->p_a_materno;
+                $row[8] = $persona->p_nombres;
+                $row[9] = date("d/m/Y", strtotime($persona->dp_fech_ini));
+                $row[10] = date("d/m/Y", strtotime($persona->dp_fech_term));
+                $row[11] = $persona->rp_admin_pension;
+                $row[12] = $persona->rp_id;
+                $row[13] = $persona->rp_regimen_pension;
+                $row[14] = $persona->dp_cuspp;
+                $row[15] = $persona->ap_group;
+                $row[16] = $persona->dp_afecto;
+
+
+                $reportConceptos=Planillaconceptos::join('conceptos','planilla_conceptos.conceptos_con_id','conceptos.con_id')
+                ->join('detalle_planilla','planilla_conceptos.detalle_planilla_dp_id','detalle_planilla.dp_id')
+                ->join('clasificador','planilla_conceptos.clasificador_cl_id','clasificador.cl_id')
+                ->join('secuencia_funcional','planilla_conceptos.secuencia_funcional_sf_id','secuencia_funcional.sf_id')
+                ->where('conceptos_con_id','=',72)
+                ->where('detalle_planilla_dp_id','=',$persona->dp_id)
+                ->get();
+
+                $montoafp = 0.00;
+                $clasificador = '';
+                $meta = '';
+                $concepto = '';
+                $nomconcepto = '';
+
+                foreach($reportConceptos as $resconceptosimprimir){
+
+                  $montoafp = $resconceptosimprimir->pcon_monto;
+                  $clasificador = $resconceptosimprimir->cl_clasificador;
+                  $meta = $resconceptosimprimir->sf_secuencia_funcional;
+                  $concepto = $resconceptosimprimir->con_concepto;
+                  $nomconcepto = $resconceptosimprimir->con_nombre;
+
+                }
+
+                $row[17] = $clasificador;
+                $row[18] = $meta;
+                $row[19] = $concepto;
+                $row[20] = $nomconcepto;
+                $row[21] = $montoafp;
+
+                $data[]=$row;
+                $numeracion += 1;
+            }
+
+       $arrayData = $data;
+
+      return response()->json([
+        'status' => true,
+        'message' => 'Reporte Satisfactorio',
+        'arraydata' => $arrayData
+      ], 200);
+
+    } catch (\Throwable $th) {
+      return response()->json([
+        'status' => false,
+        'message' => $th->getMessage()
+    ], 500);
+    }
+
+    
+
+
+}
+  
     
 }

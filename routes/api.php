@@ -37,4 +37,11 @@ Route::post('/noabonos/periodosnoabono',[DetallePlanillaController::class,'perio
 Route::post('/noabonos/mostrarnoabono',[DetallePlanillaController::class,'mostrarNoabono'])->name('noabonos.mostrarnoabono');
 Route::post('/noabonos/noabonopdf',[DetallePlanillaController::class,'noAbonopdf'])->name('noabonos.noabonopdf');
 
+//AUTORIZACION DE DESCUENTOS
+Route::post('/planilla/autorizacion',[DetallePlanillaController::class,'searchAutorizacion'])->name('planilla.autorizacion');
+Route::post('/planilla/autorizacionPDF',[DetallePlanillaController::class,'autorizacionPdf'])->name('planilla.autorizacionPDF');
+
+//Prueba salir
+Route::post('/planilla/afpExcelnominal',[DetallePlanillaController::class,'afpExcelnominal'])->name('planilla.afpExcelnominal');
+
 Route::middleware('auth:sanctum')->get('/logout', [AuthController::class, 'logout']);
