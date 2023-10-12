@@ -1003,6 +1003,244 @@ class DetallePlanillaController extends Controller
 
 
 }
+
+public function pdtExcel(Request $request){
+
+  try {
+
+    $num_id = $request->num_id;
+
+
+    $personal=Detalleplanilla::select('p_num_doc')
+      ->join('personal','detalle_planilla.personal_p_id','personal.p_id')
+      ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+      ->where('pll_id', '=',$num_id)
+      ->distinct()
+      ->get();
+
+      $numeracionrem=12;
+      $numeracion = 1;
+      $data=[];
+      
+      $row = [];
+      $row[0] = 'N°';
+      $row[1] = 'NUM_DOC';
+      $row[2] = 'CODIGO_MODULAR';
+      $row[3] = 'COD_CARGO';
+      $row[4] = 'SITUACION';
+      $row[5] = 'AP_PATERNO';
+      $row[6] = 'AP_MATERNO';
+      $row[7] = 'NOMBRES';
+      $row[8] = 'SIS_PENSION';
+      $row[9] = 'DIAS_LAB';
+      $row[10] = 'ADMIN_PENSION';
+      $row[11] = 'FECHA_INGRESO';
+      $row[12] = 'FECHA_TERMINO';
+      $row[13] = 'SUMA_CONCEPTOS';
+      $row[14] = 'MONTO_AFECTO';
+      $row[15] = 'DIFERENCIA';
+      $row[16] = 'IPPS';
+      $row[17] = 'SNP';
+      $row[18] = 'QUINTA CAT';
+      $row[19] = 'ESSALUD';
+      $row[20] = 'TARDANZAS';
+      $row[21] = 'INASISTENCIAS';
+      $row[22] = 'AGUINALDO';
+      $row[23] = 'OBSERVACION';
+
+      $data[]=$row;
+
+      $numeracionrem=12;
+      $numeracion = 1;
+
+
+      foreach ($personal as $persona){
+
+        $registrosPersonal=Detalleplanilla::join('personal','detalle_planilla.personal_p_id','personal.p_id')
+          ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+          ->where('pll_id', '=',$num_id)
+          ->where('p_num_doc','=',$persona->p_num_doc)
+          ->get();
+
+          $p_num_doc = '';
+          $p_id = '';
+          $dp_cod_cargo ='';
+          $situacion_personal_sp_id = '';
+          $p_a_paterno = '';
+          $p_a_materno = '';
+          $p_nombres = '';
+          $regimen_pension_rp_id = '';
+          $pd_dias_lab = '';
+          $admin_pension_ap_id = '';
+          $dp_fech_ini = '';
+          $dp_fech_term = '';
+          $montoAfecto = 0.00;
+
+          $mensajeSistemaPension='';
+
+          foreach($registrosPersonal as $registropersonal) {
+
+            if($p_num_doc===''){
+              $p_num_doc = $registropersonal->p_num_doc;
+              $p_id = $registropersonal->p_id;
+              $dp_cod_cargo =$registropersonal->dp_cod_cargo;
+              $situacion_personal_sp_id = $registropersonal->situacion_personal_sp_id;
+              $p_a_paterno = $registropersonal->p_a_paterno;
+              $p_a_materno = $registropersonal->p_a_materno;
+              $p_nombres = $registropersonal->p_nombres;
+              $regimen_pension_rp_id = $registropersonal->regimen_pension_rp_id;
+              $pd_dias_lab = $registropersonal->pd_dias_lab;
+              $admin_pension_ap_id = $registropersonal->admin_pension_ap_id;
+              $dp_fech_ini = $registropersonal->dp_fech_ini;
+              $dp_fech_term = $registropersonal->dp_fech_term;
+            }else {
+              //--VALIDAR ESTADO
+              if($registropersonal->situacion_personal_sp_id===4){
+                if($situacion_personal_sp_id<>4) {
+                  $p_num_doc = $registropersonal->p_num_doc;
+                  $p_id = $registropersonal->p_id;
+                  $dp_cod_cargo =$registropersonal->dp_cod_cargo;
+                  $situacion_personal_sp_id = $registropersonal->situacion_personal_sp_id;
+                  $p_a_paterno = $registropersonal->p_a_paterno;
+                  $p_a_materno = $registropersonal->p_a_materno;
+                  $p_nombres = $registropersonal->p_nombres;
+                  $regimen_pension_rp_id = $registropersonal->regimen_pension_rp_id;
+                  $pd_dias_lab = $registropersonal->pd_dias_lab;
+                  $admin_pension_ap_id = $registropersonal->admin_pension_ap_id;
+                  $dp_fech_ini = $registropersonal->dp_fech_ini;
+                  $dp_fech_term = $registropersonal->dp_fech_term;
+                }
+                if($situacion_personal_sp_id===4) {
+                  if(strtotime($registropersonal->dp_fech_ini)<strtotime($dp_fech_ini)){
+                    $p_num_doc = $registropersonal->p_num_doc;
+                    $p_id = $registropersonal->p_id;
+                    $dp_cod_cargo =$registropersonal->dp_cod_cargo;
+                    $situacion_personal_sp_id = $registropersonal->situacion_personal_sp_id;
+                    $p_a_paterno = $registropersonal->p_a_paterno;
+                    $p_a_materno = $registropersonal->p_a_materno;
+                    $p_nombres = $registropersonal->p_nombres;
+                    $regimen_pension_rp_id = $registropersonal->regimen_pension_rp_id;
+                    $pd_dias_lab = $registropersonal->pd_dias_lab;
+                    $admin_pension_ap_id = $registropersonal->admin_pension_ap_id;
+                    $dp_fech_ini = $registropersonal->dp_fech_ini;
+                    $dp_fech_term = $registropersonal->dp_fech_term;
+                  }
+                }
+              }
+            }
+
+            if($regimen_pension_rp_id<>$registropersonal->regimen_pension_rp_id){
+              $mensajeSistemaPension='No concuerda su Administracion de Pension';
+            }
+
+            $montoAfecto = $montoAfecto + $registropersonal->dp_afecto;
+
+          }
+
+          $row = [];
+          $row[0] = $numeracion;
+          $row[1] = $p_num_doc;
+          $row[2] = $p_id;
+          $row[3] = $dp_cod_cargo	;
+          $row[4] = $situacion_personal_sp_id;
+          $row[5] = $p_a_paterno;
+          $row[6] = $p_a_materno;
+          $row[7] = $p_nombres;
+          $row[8] = $regimen_pension_rp_id;
+          $row[9] = $pd_dias_lab;
+          $row[10] = $admin_pension_ap_id;
+          $row[11] =  date("d/m/Y", strtotime($dp_fech_ini));
+          $row[12] =  date("d/m/Y", strtotime($dp_fech_term));
+
+          $reportConceptos=Planillaconceptos::join('conceptos','planilla_conceptos.conceptos_con_id','conceptos.con_id')
+          ->join('detalle_planilla','planilla_conceptos.detalle_planilla_dp_id','detalle_planilla.dp_id')
+          ->join('planilla','detalle_planilla.planilla_pll_id','planilla.pll_id')
+          ->join('personal','detalle_planilla.personal_p_id','personal.p_id')
+          ->where('pll_id', '=',$num_id)
+          ->where('p_num_doc','=',$persona->p_num_doc)
+          ->get();
+
+          $sumaconceptos = 0.00;
+          $sumaipps = 0.00;
+          $sumasnp = 0.00;
+          $sumaquintacat = 0.00;
+          $sumaessalud = 0.00;
+          $sumatardanza = 0.00;
+          $sumainasistencia = 0.00;
+          $sumaaguinaldo = 0.00;
+
+          foreach($reportConceptos as $resconceptosimprimir){
+
+            if($resconceptosimprimir->tipo_conceptos_tc_id==1 && $resconceptosimprimir->conceptos_con_id <> 17 && $resconceptosimprimir->conceptos_con_id <> 49 && $resconceptosimprimir->conceptos_con_id <> 107 && $resconceptosimprimir->conceptos_con_id <> 51){
+              $sumaconceptos = $sumaconceptos + $resconceptosimprimir->pcon_monto;
+            }
+
+            if($resconceptosimprimir->conceptos_con_id=="59" ){
+              $sumaipps = $sumaipps + $resconceptosimprimir->pcon_monto;
+            }
+
+            if($resconceptosimprimir->conceptos_con_id=="53" ){
+              $sumasnp = $sumasnp + $resconceptosimprimir->pcon_monto;
+            }
+
+            if($resconceptosimprimir->conceptos_con_id=="76" ){
+              $sumaquintacat = $sumaquintacat + $resconceptosimprimir->pcon_monto;
+            }
+
+            if($resconceptosimprimir->conceptos_con_id=="94" ){
+              $sumaessalud = $sumaessalud + $resconceptosimprimir->pcon_monto;
+            }
+
+            if($resconceptosimprimir->conceptos_con_id=="66" ){
+              $sumatardanza = $sumatardanza + $resconceptosimprimir->pcon_monto;
+            }
+
+            if($resconceptosimprimir->conceptos_con_id=="73" ){
+              $sumainasistencia = $sumainasistencia + $resconceptosimprimir->pcon_monto;
+            }
+            
+            if($resconceptosimprimir->conceptos_con_id=="51" ){
+              $sumaaguinaldo = $sumaaguinaldo + $resconceptosimprimir->pcon_monto;
+            }
+
+          }
+
+
+          $row[13] = $sumaconceptos;
+          $row[14] = $montoAfecto;
+          $row[15] = $sumaconceptos - $montoAfecto;
+          $row[16] = $sumaipps;
+          $row[17] = $sumasnp;
+          $row[18] = $sumaquintacat;
+          $row[19] = $sumaessalud;
+          $row[20] = $sumatardanza;
+          $row[21] = $sumainasistencia;
+          $row[22] = $sumaaguinaldo;
+          $row[23] = $mensajeSistemaPension;
+
+        $data[]=$row;
+        $numeracion += 1;
+      }
+
+    $arrayData = $data;
+
+    return response()->json([
+      'status' => true,
+      'message' => 'Reporte Satisfactorio',
+      'arraydata' => $arrayData
+    ], 200);
+
+  } catch (\Throwable $th) {
+    return response()->json([
+      'status' => false,
+      'message' => $th->getMessage()
+  ], 500);
+  }
+
+  
+
+
+}
   
     
 }

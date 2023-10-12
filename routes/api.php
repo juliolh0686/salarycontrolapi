@@ -43,5 +43,6 @@ Route::post('/planilla/autorizacionPDF',[DetallePlanillaController::class,'autor
 
 //Prueba salir
 Route::post('/planilla/afpExcelnominal',[DetallePlanillaController::class,'afpExcelnominal'])->name('planilla.afpExcelnominal');
+Route::post('/planilla/pdtexcel',[DetallePlanillaController::class,'pdtExcel'])->name('planilla.pdtexcel');
 
 Route::middleware('auth:sanctum')->get('/logout', [AuthController::class, 'logout']);
