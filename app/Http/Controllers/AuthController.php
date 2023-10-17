@@ -70,7 +70,7 @@ class AuthController extends Controller
            if(!Auth::attempt($request->only(['email', 'password']))){
                return response()->json([
                    'status' => false,
-                   'message' => 'Email & Password does not match with our record.',
+                   'message' => 'El correo electrónico y la contraseña no coinciden con nuestro registro.',
                ], 401);
            }
 
@@ -78,7 +78,7 @@ class AuthController extends Controller
 
            return response()->json([
                'status' => true,
-               'message' => 'User Logged In Successfully',
+               'message' => 'El usuario inició sesión correctamente',
                'token' => $user->createToken("API TOKEN")->plainTextToken,
                'user' => $user
            ], 200);

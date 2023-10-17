@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DetallePlanillaController;
 use App\Http\Controllers\PlanillaconceptosController;
+use App\Http\Controllers\PlanillaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,20 @@ Route::post('/planilla/autorizacionPDF',[DetallePlanillaController::class,'autor
 
 //Prueba salir
 Route::post('/planilla/afpExcelnominal',[DetallePlanillaController::class,'afpExcelnominal'])->name('planilla.afpExcelnominal');
+Route::post('/planilla/afpExcel',[DetallePlanillaController::class,'afpExcel'])->name('planilla.afpExcel');
 Route::post('/planilla/pdtexcel',[DetallePlanillaController::class,'pdtExcel'])->name('planilla.pdtexcel');
+
+//Reportes PDT
+Route::post('planilla/fileide',[DetallePlanillaController::class,'fileide'])->name('planilla.fileide');
+Route::post('planilla/filetra',[DetallePlanillaController::class,'filetra'])->name('planilla.filetra');
+Route::post('planilla/fileest',[DetallePlanillaController::class,'fileest'])->name('planilla.fileest');
+Route::post('planilla/fileedu',[DetallePlanillaController::class,'fileedu'])->name('planilla.fileedu');
+Route::post('planilla/fileper',[DetallePlanillaController::class,'fileper'])->name('planilla.fileper');
+
+//Reporte de 100 en 100
+Route::post('planilla/reporteexcel100',[DetallePlanillaController::class,'reporteExcel100'])->name('planilla.reporteExcel100');
+
+//planila controller
+Route::post('planilla/listplanillas',[PlanillaController::class,'listarPlanillas'])->name('planilla.listplanillas');
 
 Route::middleware('auth:sanctum')->get('/logout', [AuthController::class, 'logout']);

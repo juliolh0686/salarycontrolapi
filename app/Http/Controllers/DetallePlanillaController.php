@@ -678,12 +678,6 @@ class DetallePlanillaController extends Controller
           'personal' => $personal
         ];
 
-        // return response()->json([
-        //   'status' => true,
-        //   'message' => 'Reporte Satisfactorio',
-        //   'personal' => $personal,
-        // ], 200);
-
       } catch (\Throwable $th) {
         return response()->json([
           'status' => false,
@@ -998,9 +992,84 @@ class DetallePlanillaController extends Controller
         'message' => $th->getMessage()
     ], 500);
     }
+}
 
+public function afpExcel(Request $request) {
+
+  try {
+
+    $num_id = $request->num_id;
+
+
+    $data = [];
+
+    $row = [];
+    $row[0] = 'AFP';
+    $row[1] = 'CLASIFICADOR';
+    $row[2] = 'SEC_FUN';
+    $row[3] = 'COD_CONCEPTO';
+    $row[4] = 'CONCEPTO';
+    $row[5] = 'MONTO';
+
+    $sqlDataAfp = "
+    SELECT
+      ap_group,
+      cl_clasificador,
+      sf_secuencia_funcional,
+      MAX(con_concepto) AS cod_concepto,
+      MAX(con_nombre) AS con_nombre,
+      SUM(pcon_monto) AS monto
+    FROM 
+      planilla_conceptos
+      INNER JOIN secuencia_funcional ON planilla_conceptos.secuencia_funcional_sf_id=secuencia_funcional.sf_id
+      INNER JOIN clasificador ON planilla_conceptos.clasificador_cl_id=clasificador.cl_id
+      INNER JOIN conceptos ON planilla_conceptos.conceptos_con_id=conceptos.con_id
+      INNER JOIN detalle_planilla ON planilla_conceptos.detalle_planilla_dp_id=detalle_planilla.dp_id
+      INNER JOIN planilla ON detalle_planilla.planilla_pll_id=planilla.pll_id
+      INNER JOIN admin_pension ON detalle_planilla.admin_pension_ap_id=admin_pension.ap_id
+      INNER JOIN personal ON detalle_planilla.personal_p_id=personal.p_id
+    WHERE
+      con_concepto='-0113'
+      AND pll_id='".$num_id."'
+    GROUP BY 
+      ap_group,
+      cl_clasificador,
+      sf_secuencia_funcional;
+    ";
+
+    $dataAfp = DB::select($sqlDataAfp);
+
+    $data[]=$row;
+
+    foreach($dataAfp as $dataAfps){
+
+      $row = [];
+      $row[0] = $dataAfps->ap_group;
+      $row[1] = $dataAfps->cl_clasificador;
+      $row[2] = $dataAfps->sf_secuencia_funcional;
+      $row[3] = $dataAfps->cod_concepto;
+      $row[4] = $dataAfps->con_nombre;
+      $row[5] = $dataAfps->monto;
     
+      $data[]=$row;
 
+    }
+
+    $arrayData = $data;
+
+
+    return response()->json([
+      'status' => true,
+      'message' => 'Reporte Satisfactorio',
+      'arraydata' => $arrayData
+    ], 200);
+
+  } catch (\Throwable $th) {
+    return response()->json([
+        'status' => false,
+        'message' => $th->getMessage()
+    ], 500);
+  }  
 
 }
 
@@ -1237,9 +1306,439 @@ public function pdtExcel(Request $request){
   ], 500);
   }
 
+}
+
+public function fileide(Request $request) {
+
+  try {
+
+    $num_id = $request->num_id;
+
+    $planilla= Personal::select('p_tip_doc', 'p_num_doc', 'p_fech_nac', 'p_a_paterno','p_a_materno','p_nombres','sexo_p_sexo')
+      ->distinct('p_num_doc')
+      ->join('detalle_planilla', 'personal.p_id', '=', 'detalle_planilla.personal_p_id')
+      ->join('planilla', 'detalle_planilla.planilla_pll_id', '=','planilla.pll_id')
+      ->where('pll_id',$num_id)
+      ->get();
+
+      foreach ($planilla as $planilla) {
+
+        $row = [];
+
+        //Variables
+        $tipo_cocumento = "01";
   
+        //Formatear Numero de DNI
+        if($planilla->p_tip_doc===5){
+          $tipo_cocumento = "05";
+        }
+  
+        //Formatear Fecha
+        $newDate = date("d/m/Y", strtotime($planilla->p_fech_nac));
+  
+        //Formatear Sexo
+        $newSexo = 1;
+        
+        if ($planilla->sexo_p_sexo===1) {
+          $newSexo = 2;
+        }
+
+        $row[0] = $tipo_cocumento;
+        $row[1] = $planilla->p_num_doc;
+        $row[2] = '604';
+        $row[3] = $newDate;
+        $row[4] = $planilla->p_a_paterno;
+        $row[5] = $planilla->p_a_materno;
+        $row[6] = $planilla->p_nombres;
+        $row[7] = $newSexo;
+        $row[8] = '9589';
+        $row[9] = '999999999';
+        $row[10] = 'correo@correo.com';
+        $row[11] = '';
+        $row[12] = '';
+        $row[11] = '';
+        $row[13] = '';
+        $row[14] = '';
+        $row[15] = '';
+        $row[16] = '';
+        $row[17] = '';
+        $row[18] = '';
+        $row[19] = '';
+        $row[20] = '';
+        $row[21] = '';
+        $row[22] = '';
+        $row[23] = '';
+        $row[24] = '';
+        $row[25] = '';
+        $row[26] = '';
+        $row[27] = '';
+        $row[28] = '';
+        $row[29] = '';
+        $row[30] = '';
+        $row[31] = '';
+        $row[32] = '';
+        $row[33] = '';
+        $row[34] = '';
+        $row[35] = '';
+        $row[36] = '';
+        $row[36] = '';
+        $row[36] = 1;
+  
+        $data[]=$row;
+
+      }
+
+      $arrayData = $data;
+
+    return response()->json([
+      'status' => true,
+      'message' => 'Reporte Satisfactorio',
+      'arraydata' => $arrayData
+    ], 200);
+
+  } catch (\Throwable $th) {
+    return response()->json([
+      'status' => false,
+      'message' => $th->getMessage()
+  ], 500);
+  }
 
 
+}
+
+public function filetra(Request $request) {
+
+  try {
+
+    $num_id = $request->num_id;
+
+    $planilla= Personal::select('p_tip_doc', 'p_num_doc', 'regimen_laboral_rl_id', 'dp_cuspp')
+      ->distinct('p_num_doc')
+      ->join('detalle_planilla', 'personal.p_id', '=', 'detalle_planilla.personal_p_id')
+      ->join('planilla', 'detalle_planilla.planilla_pll_id', '=','planilla.pll_id')
+      ->where('pll_id',$num_id)
+      ->get();
+
+      foreach ($planilla as $planilla) {
+
+        $row = [];
+
+        //Variables
+        $tipo_cocumento = "01";
+  
+        //Formatear Numero de DNI
+        if($planilla->p_tip_doc===5){
+          $tipo_cocumento = "05";
+        }
+
+        //Hallar Regimen Laboral
+        $newReglab = '23';
+
+        if($planilla->dp_reg_lab===3){
+          $newReglab = '02';
+        }
+
+        if($planilla->dp_reg_lab===6 or $planilla->dp_reg_lab===10){
+          $newReglab = '99';
+        }
+
+        $row[0] = $tipo_cocumento;
+        $row[1] = $planilla->p_num_doc;
+        $row[2] = '604';
+        $row[3] = $newReglab;
+        $row[4] = '13';
+        $row[5] = '242001';
+        $row[6] = 0;
+        $row[7] = $planilla->dp_cuspp;
+        $row[8] = 0;
+        $row[9] = 99;
+        $row[10] = 0;
+        $row[11] = 0;
+        $row[12] = 0;
+        $row[11] = 0;
+        $row[13] = 1;
+        $row[14] = 0.00;
+        $row[15] = 1;
+        $row[16] = 0;
+        $row[17] = 0;
+        $row[18] = 1;
+        $row[19] = 12;
+        $row[20] = 0;
+        $row[21] = '';
+  
+        $data[]=$row;
+
+      }
+
+      $arrayData = $data;
+
+    return response()->json([
+      'status' => true,
+      'message' => 'Reporte Satisfactorio',
+      'arraydata' => $arrayData
+    ], 200);
+
+  } catch (\Throwable $th) {
+    return response()->json([
+      'status' => false,
+      'message' => $th->getMessage()
+  ], 500);
+  }
+
+}
+
+public function fileest(Request $request) {
+
+  try {
+
+    $num_id = $request->num_id;
+
+    $planilla= Personal::select('p_tip_doc', 'p_num_doc')
+      ->distinct('p_num_doc')
+      ->join('detalle_planilla', 'personal.p_id', '=', 'detalle_planilla.personal_p_id')
+      ->join('planilla', 'detalle_planilla.planilla_pll_id', '=','planilla.pll_id')
+      ->where('pll_id',$num_id)
+      ->get();
+
+      foreach ($planilla as $planilla) {
+
+        $row = [];
+
+        //Variables
+        $tipo_cocumento = "01";
+  
+        //Formatear Numero de DNI
+        if($planilla->p_tip_doc===5){
+          $tipo_cocumento = "05";
+        }
+
+        $row[0] = $tipo_cocumento;
+        $row[1] = $planilla->p_num_doc;
+        $row[2] = '604';
+        $row[3] = '20334929281';
+        $row[4] = '0000';
+  
+        $data[]=$row;
+
+      }
+
+      $arrayData = $data;
+
+    return response()->json([
+      'status' => true,
+      'message' => 'Reporte Satisfactorio',
+      'arraydata' => $arrayData
+    ], 200);
+
+  } catch (\Throwable $th) {
+    return response()->json([
+      'status' => false,
+      'message' => $th->getMessage()
+  ], 500);
+  }
+
+}
+
+public function fileedu(Request $request) {
+
+  try {
+
+    $num_id = $request->num_id;
+
+    $planilla= Personal::select('p_tip_doc', 'p_num_doc')
+      ->distinct('p_num_doc')
+      ->join('detalle_planilla', 'personal.p_id', '=', 'detalle_planilla.personal_p_id')
+      ->join('planilla', 'detalle_planilla.planilla_pll_id', '=','planilla.pll_id')
+      ->where('pll_id',$num_id)
+      ->get();
+
+      foreach ($planilla as $planilla) {
+
+        $row = [];
+
+        //Variables
+        $tipo_cocumento = "01";
+  
+        //Formatear Numero de DNI
+        if($planilla->p_tip_doc===5){
+          $tipo_cocumento = "05";
+        }
+
+        $row[0] = $tipo_cocumento;
+        $row[1] = $planilla->p_num_doc;
+        $row[2] = '604';
+        $row[3] = 13;
+        $row[4] = 0;
+        $row[5] = '';
+        $row[6] = '';
+        $row[7] = '';
+  
+        $data[]=$row;
+
+      }
+
+      $arrayData = $data;
+
+    return response()->json([
+      'status' => true,
+      'message' => 'Reporte Satisfactorio',
+      'arraydata' => $arrayData
+    ], 200);
+
+  } catch (\Throwable $th) {
+    return response()->json([
+      'status' => false,
+      'message' => $th->getMessage()
+  ], 500);
+  }
+
+}
+
+public function fileper(Request $request) {
+
+  try {
+
+    $num_id = $request->num_id;
+
+    $planilla= Personal::select('p_tip_doc', 'p_num_doc', 'dp_fech_ini')
+      ->join('detalle_planilla', 'personal.p_id', '=', 'detalle_planilla.personal_p_id')
+      ->join('planilla', 'detalle_planilla.planilla_pll_id', '=','planilla.pll_id')
+      ->where('pll_id',$num_id)
+      ->get();
+
+      foreach ($planilla as $planilla) {
+
+        $row = [];
+
+        //Variables
+        $tipo_cocumento = "01";
+  
+        //Formatear Numero de DNI
+        if($planilla->p_tip_doc===5){
+          $tipo_cocumento = "05";
+        }
+
+        //Formatear Fecha
+        $newDate = date("d/m/Y", strtotime($planilla->dp_fech_ini));
+
+        $row[0] = $tipo_cocumento;
+        $row[1] = $planilla->p_num_doc;
+        $row[2] = '604';
+        $row[3] = 1;
+        $row[4] = 1;
+        $row[5] = $newDate;
+        $row[6] = '';
+        $row[7] = '';
+        $row[8] = '';
+  
+        $data[]=$row;
+
+      }
+
+      $arrayData = $data;
+
+    return response()->json([
+      'status' => true,
+      'message' => 'Reporte Satisfactorio',
+      'arraydata' => $arrayData
+    ], 200);
+
+  } catch (\Throwable $th) {
+    return response()->json([
+      'status' => false,
+      'message' => $th->getMessage()
+  ], 500);
+  }
+}
+
+
+public function reporteExcel100(Request $request){
+
+  try {
+
+    $num_id = $request->num_id;
+
+    //CREAR LA CARPETA SI NO EXISTE
+    $micarpeta = 'D:/DATACARGA';
+    if (!file_exists($micarpeta)) {
+        mkdir($micarpeta, 0777, true);
+    }
+
+    //ELIMINAR ARCHIVOS EXISTENTES EN LA CARPETA
+    array_map('unlink', glob("D:/DATACARGA/*"));
+
+    //CUENTA DE REGISTROS
+    $cuenta= Detalleplanilla::rightJoin('personal', 'detalle_planilla.personal_p_id', '=', 'personal.p_id')
+      ->join('planilla', 'detalle_planilla.planilla_pll_id', '=','planilla.pll_id')
+      ->where('pll_id','=', $num_id)
+      ->where('regimen_pension_rp_id','<>',3)
+      ->count();
+
+    $totalfilas = ceil($cuenta/100);
+
+    $conteo = 0;
+
+    while ($conteo <= ($totalfilas*100)) {
+
+      $planillatotales= Detalleplanilla::rightJoin('personal', 'detalle_planilla.personal_p_id', '=', 'personal.p_id')
+        ->join('planilla', 'detalle_planilla.planilla_pll_id', '=','planilla.pll_id')
+        ->where('pll_id','=', $num_id)
+        ->where('regimen_pension_rp_id','<>',3)
+        ->skip($conteo)
+        ->take(100)
+        ->get();
+
+      $spreadsheet = new Spreadsheet();
+
+      $data=[];
+
+      $arrayData = [];
+
+      foreach ($planillatotales as $datosplanilla){
+
+          $tipo_doc_final ='0';
+
+          if($datosplanilla->p_tip_doc===5){
+            $tipo_doc_final=1;
+          }
+
+
+          $row = [];
+          $row[1] = $tipo_doc_final;
+          $row[2] = $datosplanilla->p_num_doc;
+          $row[3] = $datosplanilla->p_a_paterno;
+          $row[4] = $datosplanilla->p_a_materno;
+          $row[5] = $datosplanilla->p_nombres;
+          $data[]=$row;
+
+          $arrayData = $data;
+
+      }
+
+      $spreadsheet->getActiveSheet()
+          ->fromArray($arrayData,NULL,'A1');
+
+      $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+      $objWriter->save('D:/DATACARGA/'.$conteo.'.xlsx');
+
+      $conteo = $conteo+100;
+
+    }
+
+    return response()->json([
+      'status' => true,
+      'message' => 'Reporte Satisfactorio',
+      'conteo' => $totalfilas
+    ], 200);
+
+  } catch (\Throwable $th) {
+    return response()->json([
+      'status' => false,
+      'message' => $th->getMessage()
+  ], 500);
+  }
+
+  
 }
   
     
