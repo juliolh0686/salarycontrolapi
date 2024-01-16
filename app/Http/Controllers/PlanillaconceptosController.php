@@ -51,6 +51,7 @@ class PlanillaconceptosController extends Controller
 
       $conceptos = Concepto::get();
       $var_clasificador=0;
+      $var_clasificador_essalud=0;
       $var_sec_fun=0;
       $conteo = 0;
 
@@ -108,16 +109,16 @@ class PlanillaconceptosController extends Controller
 
                 switch($detalle_planilla->nivel_n_id){
                   case '01':
-                    $var_sec_fun=13;
+                    $var_sec_fun=53;
                     break;
                   case '02':
-                    $var_sec_fun=14;
+                    $var_sec_fun=54;
                     break;
                   case '03':
-                    $var_sec_fun=15;
+                    $var_sec_fun=55;
                     break;
                   case '09':
-                    $var_sec_fun=13;
+                    $var_sec_fun=53;
                     break;
                   default:
                   $var_sec_fun = $var_sec_fun;
@@ -126,30 +127,35 @@ class PlanillaconceptosController extends Controller
               }
 
               if ($detalle_planilla->establecimiento_est_id=='0H048015' || $detalle_planilla->establecimiento_est_id=='0H118010'){
-                $var_sec_fun=16;
+                $var_sec_fun=56;
               }
 
               //PROFESOR EDUCACION FISICA
               if($detalle_planilla->cargo_car_id=='5021') {
-                $var_sec_fun=7;
+                $var_sec_fun=46;
               }
 
               if ($detalle_planilla->cargo_car_id==5016){
                 if($detalle_planilla->nivel_n_id=='02'){
-                  $var_sec_fun = 8;
+                  $var_sec_fun = 47;
                 }
                 if($detalle_planilla->nivel_n_id=='03'){
-                  $var_sec_fun = 12;
+                  $var_sec_fun = 52;
                 }
               }
 
-              //Pendiente
+              if ($detalle_planilla->tipo_servidor_ts_id==3 || $detalle_planilla->tipo_servidor_ts_id==4 || $detalle_planilla->tipo_servidor_ts_id==5 || $detalle_planilla->tipo_servidor_ts_id==6 || $detalle_planilla->tipo_servidor_ts_id==9 || $detalle_planilla->tipo_servidor_ts_id==11){
+                $var_clasificador_essalud = 22;
+              } else {
+                $var_clasificador_essalud = 23;
+              }
+
               //--INSERTAR APORTE A ESSALUD--//
               if($detalle_planilla->dp_essalud<>0) {
                 $planilla_conceptos = new Planillaconceptos;
                 $planilla_conceptos->pcon_monto = $detalle_planilla->dp_essalud;
                 $planilla_conceptos->conceptos_con_id = 94;
-                $planilla_conceptos->clasificador_cl_id = 9;
+                $planilla_conceptos->clasificador_cl_id = $var_clasificador_essalud;
                 $planilla_conceptos->secuencia_funcional_sf_id = $var_sec_fun;
                 $planilla_conceptos->detalle_planilla_dp_id = $detalle_planilla->dp_id;
                 $planilla_conceptos->tipo_planilla_tp_id = $tipo_planilla;
@@ -178,13 +184,13 @@ class PlanillaconceptosController extends Controller
                         $var_clasificador_con=6;
                         break;
                       case '+028':
-                        $var_clasificador_con=15;
+                        $var_clasificador_con=24;
                         break;
                       case '+029':
                         $var_clasificador_con=20;
                         break;
                       case '+032':
-                        $var_clasificador_con=16;
+                        $var_clasificador_con=25;
                         break;
                       case '+206':
                         $var_clasificador_con=3;
@@ -193,10 +199,10 @@ class PlanillaconceptosController extends Controller
                         $var_clasificador_con=18;
                         break;
                       case '+248':
-                        $var_clasificador_con=8;
+                        $var_clasificador_con=26;
                         break;
                       case '+249':
-                        $var_clasificador_con=8;
+                        $var_clasificador_con=26;
                         break;
                       case '+259':
                         $var_clasificador_con=3;
@@ -211,19 +217,19 @@ class PlanillaconceptosController extends Controller
                         $var_clasificador_con=3;
                         break;
                       case '+276':
-                        $var_clasificador_con=15;
+                        $var_clasificador_con=24;
                         break;
                       case '+277':
                         $var_clasificador_con=20;
                         break;
                       case '+301':
-                        $var_clasificador_con=16;
+                        $var_clasificador_con=25;
                         break;
                       case '+302':
                         $var_clasificador_con=20;
                         break;
                       case '+303':
-                        $var_clasificador_con=15;
+                        $var_clasificador_con=24;
                         break;
                       default:
                         $var_clasificador_con=$var_clasificador_con;
@@ -232,31 +238,31 @@ class PlanillaconceptosController extends Controller
                     if ($itemsconceptos->concepto=='+231'){
                       switch ($detalle_planilla->nivel_n_id) {
                         case '01':
-                          $var_sec_fun_con=3;
+                          $var_sec_fun_con=42;
                           break;
                         case '02':
-                          $var_sec_fun_con=6;
+                          $var_sec_fun_con=45;
                           break;
                         case '03':
-                          $var_sec_fun_con=11;
+                          $var_sec_fun_con=51;
                           break;
                         case '04':
-                          $var_sec_fun_con=32;
+                          $var_sec_fun_con=76;
                           break;
                         case '05':
-                          $var_sec_fun_con=26;
+                          $var_sec_fun_con=70;
                           break;
                         case '07':
-                          $var_sec_fun_con=29;
+                          $var_sec_fun_con=73;
                           break;
                         case '08':
-                          $var_sec_fun_con=19;
+                          $var_sec_fun_con=59;
                           break;
                         case '09':
-                          $var_sec_fun_con=3;
+                          $var_sec_fun_con=42;
                           break;
                         case '00':
-                          $var_sec_fun_con=21;
+                          $var_sec_fun_con=64;
                           break;
                         default:
                           $var_sec_fun_con=$var_sec_fun_con;

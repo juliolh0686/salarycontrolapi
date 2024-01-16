@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DetallePlanillaController;
 use App\Http\Controllers\PlanillaconceptosController;
 use App\Http\Controllers\PlanillaController;
+use App\Http\Controllers\ConceptoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,10 @@ Route::post('planilla/filetra',[DetallePlanillaController::class,'filetra'])->na
 Route::post('planilla/fileest',[DetallePlanillaController::class,'fileest'])->name('planilla.fileest');
 Route::post('planilla/fileedu',[DetallePlanillaController::class,'fileedu'])->name('planilla.fileedu');
 Route::post('planilla/fileper',[DetallePlanillaController::class,'fileper'])->name('planilla.fileper');
+
+//Reportes
+Route::post('planilla/optionconceptos',[ConceptoController::class,'optionConceptos'])->name('planilla.optionconceptos');
+Route::post('/planilla/conceptosExcelnominal',[ConceptoController::class,'conceptosExcelnominal'])->name('planilla.conceptosExcelnominal');
 
 //Reporte de 100 en 100
 Route::post('planilla/reporteexcel100',[DetallePlanillaController::class,'reporteExcel100'])->name('planilla.reporteExcel100');

@@ -46,7 +46,7 @@ class DetallePlanillaController extends Controller
         $select_planilla = Planilla::where('estado_planilla_ep_id','=',1)->get()->first();
         $id_planilla = $select_planilla->pll_id;
 
-        $c = 0;
+        $num_registros = 0;
 
         if($tipocarga == "continua") {
 
@@ -214,9 +214,17 @@ class DetallePlanillaController extends Controller
             $detalle_planilla->save();
             
             //Conteo de registros
-            $c++;
+            $num_registros++;
   
           }
+
+          $sumatoria_carga = Detalleplanilla::select(DB::raw('sum(dp_bruto) as dp_bruto, sum(dp_desc) as dp_desc, sum(dp_liquido) as dp_liquido, sum(dp_essalud) as dp_essalud'))
+          ->join('planilla','detalle_planilla.planilla_pll_id','=','planilla.pll_id')
+          ->where('planilla_pll_id','=',$select_planilla->pll_id)
+          ->whereIn('tipo_planilla_tp_id', [1,2])
+          ->get()
+          ->first();
+
           //****FIN CARGA PLANILLA CONTINUA****
 
         }elseif($tipocarga=="ocasional") {
@@ -318,11 +326,18 @@ class DetallePlanillaController extends Controller
               $detalle_planilla->save();
     
               //Conteo de registros
-              $c++;
+              $num_registros++;
 
             }
   
           }
+
+          $sumatoria_carga = Detalleplanilla::select(DB::raw('sum(dp_bruto) as dp_bruto, sum(dp_desc) as dp_desc, sum(dp_liquido) as dp_liquido, sum(dp_essalud) as dp_essalud'))
+          ->join('planilla','detalle_planilla.planilla_pll_id','=','planilla.pll_id')
+          ->where('planilla_pll_id','=',$select_planilla->pll_id)
+          ->where('tipo_planilla_tp_id','=',3)
+          ->get()
+          ->first();
       
           //****FIN DE CARGA PLANILLA OCASIONAL****
 
@@ -488,7 +503,7 @@ class DetallePlanillaController extends Controller
             $detalle_planilla->save();
 
             //Conteo de registros
-            $c++;
+            $num_registros++;
   
           }
       
@@ -510,17 +525,15 @@ class DetallePlanillaController extends Controller
   
         fclose($oa);
 
-        $res = $c.' Registros Procesados';
-
         return response()->json([
-            'res'=>$res,
-            'totalbruto'=>$sumatorias_planilla->dp_bruto,
-            'totaldescuentos'=>$sumatorias_planilla->dp_desc,
-            'totalliquido'=>$sumatorias_planilla->dp_liquido,
-            'totalessalud'=>$sumatorias_planilla->dp_essalud,
+            'registros_insertados'=>$num_registros,
+            'totalbruto'=>$sumatoria_carga->dp_bruto,
+            'totaldescuentos'=>$sumatoria_carga->dp_desc,
+            'totalliquido'=>$sumatoria_carga->dp_liquido,
+            'totalessalud'=>$sumatoria_carga->dp_essalud,
             'tipocarga' => $tipocarga,
             'status' => true,
-            'message' => 'Copiado Satisfactoriamente',
+            'message' => 'Importado Satisfactoriamente',
         ], 200);
 
       } catch (\Throwable $th) {
