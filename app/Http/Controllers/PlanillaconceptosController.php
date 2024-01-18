@@ -204,6 +204,9 @@ class PlanillaconceptosController extends Controller
                       case '+249':
                         $var_clasificador_con=26;
                         break;
+                      case '+186':
+                        $var_clasificador_con=26;
+                        break;
                       case '+259':
                         $var_clasificador_con=3;
                         break;
