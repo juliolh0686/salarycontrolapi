@@ -63,6 +63,7 @@ class PlanillaconceptosController extends Controller
         }else {
           $pos = strpos($lineas[$registros],'PLANILLA UNICA DE REMUNERACIONES');
         }
+
         $pos2 = strpos($lineas[$registros],'NOMBRE DEL ESTABLECIMIENTO ');
 
         if($pos === false && $pos2 == false ) {
@@ -171,7 +172,7 @@ class PlanillaconceptosController extends Controller
                 $var_clasificador_con=$var_clasificador;
 
                 if($ub_concepto <> false){
-                  $monto_concepto = str_replace(',','',substr($lineas[$registros],$ub_concepto+15,9));
+                  $monto_concepto = str_replace(',','',substr($lineas[$registros],$ub_concepto+14,10));
 
                   if(is_numeric($monto_concepto)) {
 

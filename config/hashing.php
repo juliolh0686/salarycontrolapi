@@ -14,6 +14,8 @@ return [
     | Supported: "bcrypt", "argon", "argon2id"
     |
     */
+    
+    'rehash_on_login' => false,
 
     'driver' => 'bcrypt',
 
