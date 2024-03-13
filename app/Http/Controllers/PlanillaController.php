@@ -11,7 +11,7 @@ class PlanillaController extends Controller
 
         try {
     
-            $planilla= Planilla::orderBy('pll_id','DESC')->paginate(20);
+            $planilla= Planilla::orderBy('pll_id','DESC')->paginate(14);
     
             return [
               'pagination' =>[

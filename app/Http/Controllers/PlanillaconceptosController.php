@@ -294,13 +294,22 @@ class PlanillaconceptosController extends Controller
       fclose($file);
 
       $totalbruto = Planillaconceptos::join('conceptos','planilla_conceptos.conceptos_con_id','=','conceptos.con_id')
-        ->where('tipo_conceptos_tc_id','=',1)->sum('pcon_monto');
+        ->join('detalle_planilla','detalle_planilla.dp_id','planilla_conceptos.detalle_planilla_dp_id')
+        ->where('tipo_conceptos_tc_id','=',1)
+        ->where('planilla_pll_id','=',$id_planilla)
+        ->sum('pcon_monto');
 
       $totaldescuentos = Planillaconceptos::join('conceptos','planilla_conceptos.conceptos_con_id','=','conceptos.con_id')
-        ->where('tipo_conceptos_tc_id','=',2)->sum('pcon_monto');
+        ->join('detalle_planilla','detalle_planilla.dp_id','planilla_conceptos.detalle_planilla_dp_id')
+        ->where('tipo_conceptos_tc_id','=',2)
+        ->where('planilla_pll_id','=',$id_planilla)
+        ->sum('pcon_monto');
 
       $totalessalud = Planillaconceptos::join('conceptos','planilla_conceptos.conceptos_con_id','=','conceptos.con_id')
-        ->where('tipo_conceptos_tc_id','=',3)->sum('pcon_monto');
+        ->join('detalle_planilla','detalle_planilla.dp_id','planilla_conceptos.detalle_planilla_dp_id')
+        ->where('tipo_conceptos_tc_id','=',3)
+        ->where('planilla_pll_id','=',$id_planilla)
+        ->sum('pcon_monto');
 
       return response()->json([
         'res'=>$conteo,
