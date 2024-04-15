@@ -21,7 +21,7 @@ class DetallePlanillaController extends Controller
       $tipocarga = $request->tipocarga;
 
       try {
-        
+
         $tipoarchivo=$request->file;
 
         //Recibimos el archivo y lo guardamos en la carpeta storage/app/public
@@ -64,11 +64,11 @@ class DetallePlanillaController extends Controller
             $p_tip_doc=trim($a[10]);
             $p_num_doc=trim($a[11]);
             $nacionalidad_n_id=trim($a[12]);
-  
+
             $mifecha = explode("/", $p_fech_nac);
-            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
             $p_fech_nac= $lafecha;
-  
+
             //DATOS LABORALES
             $dp_cod_registro=ltrim($a[1]).trim($a[2]);
             $dp_cod_cargo=trim($a[2]);
@@ -103,52 +103,52 @@ class DetallePlanillaController extends Controller
             $regimen_laboral_rl_id=trim($a[58]);
             $dp_horas_adicionales= trim($a[57]);
             $dp_cod_nexus=mb_convert_encoding(trim($a[60]),"UTF-8","ISO-8859-1");
-            $dp_bruto=trim($a[61]);
-            $dp_afecto=trim($a[62]);
-            $dp_desc=trim($a[63]);
-            $dp_liquido=trim($a[64]);
-            $dp_essalud=trim($a[65]);
-  
+            $dp_bruto=trim($a[62]);
+            $dp_afecto=trim($a[63]);
+            $dp_desc=trim($a[64]);
+            $dp_liquido=trim($a[65]);
+            $dp_essalud=trim($a[66]);
+
             if(strlen($nivel_n_id)==1){
               $nivel_n_id='0'.$nivel_n_id;
             }
 
             $mifecha = explode("/", $dp_fech_ini);
-            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
             $dp_fech_ini= $lafecha;
-  
+
             $mifecha = explode("/", $dp_fech_term);
-            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
             $dp_fech_term= $lafecha;
-  
+
             if($dp_fech_afi=='01/01/1900'){
               $dp_fech_afi= null;
             }else {
               $mifecha = explode("/", $dp_fech_afi);
-              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
               $dp_fech_afi= $lafecha;
             }
-  
+
             if($dp_fech_dev=='01/01/1900'){
               $dp_fech_dev= null;
             }else {
               $mifecha = explode("/", $dp_fech_dev);
-              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
               $dp_fech_dev= $lafecha;
             }
-  
+
             if($dp_fech_ini_lic=='01/01/1900'){
               $dp_fech_ini_lic= null;
             }else {
               $mifecha = explode("/", $dp_fech_ini_lic);
-              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
               $dp_fech_ini_lic= $lafecha;
             }
-  
+
             if(strlen($dp_cuenta)==10) {
               $dp_cuenta="0".$dp_cuenta;
             }
-  
+
             //INSERTAR PERSONAL
             $personal = Personal::firstOrCreate(
               ['p_id' => $p_id],
@@ -162,7 +162,7 @@ class DetallePlanillaController extends Controller
               'p_num_doc' => $p_num_doc,
               'nacionalidad_n_id' => $nacionalidad_n_id],
             );
-  
+
              //INSERTAR DETALLE PLANILLA
             $detalle_planilla= new Detalleplanilla();
             $detalle_planilla->dp_cod_registro=$dp_cod_registro;
@@ -212,10 +212,10 @@ class DetallePlanillaController extends Controller
               $detalle_planilla->tipo_planilla_tp_id = 1;
             }
             $detalle_planilla->save();
-            
+
             //Conteo de registros
             $num_registros++;
-  
+
           }
 
           $sumatoria_carga = Detalleplanilla::select(DB::raw('sum(dp_bruto) as dp_bruto, sum(dp_desc) as dp_desc, sum(dp_liquido) as dp_liquido, sum(dp_essalud) as dp_essalud'))
@@ -251,7 +251,7 @@ class DetallePlanillaController extends Controller
               $nacionalidad_n_id=1;
 
               $mifecha = explode("/", $p_fech_nac);
-              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
               $p_fech_nac= $lafecha;
 
 
@@ -280,11 +280,11 @@ class DetallePlanillaController extends Controller
               if(strlen($nivel_n_id)==1){
                 $nivel_n_id='0'.$nivel_n_id;
               }
-    
+
               if(strlen($dp_cuenta)==10) {
                 $dp_cuenta="0".$dp_cuenta;
               }
-    
+
               //INSERTAR PERSONAL
               $personal = Personal::firstOrCreate(
                 ['p_id' => $p_id],
@@ -298,7 +298,7 @@ class DetallePlanillaController extends Controller
                 'p_num_doc' => $p_num_doc,
                 'nacionalidad_n_id' => $nacionalidad_n_id],
               );
-    
+
                //INSERTAR DETALLE PLANILLA
               $detalle_planilla= new Detalleplanilla();
               $detalle_planilla->dp_cod_registro=$dp_cod_registro;
@@ -324,12 +324,12 @@ class DetallePlanillaController extends Controller
               $detalle_planilla->personal_p_id = $p_id;
               $detalle_planilla->tipo_planilla_tp_id = 3;
               $detalle_planilla->save();
-    
+
               //Conteo de registros
               $num_registros++;
 
             }
-  
+
           }
 
           $sumatoria_carga = Detalleplanilla::select(DB::raw('sum(dp_bruto) as dp_bruto, sum(dp_desc) as dp_desc, sum(dp_liquido) as dp_liquido, sum(dp_essalud) as dp_essalud'))
@@ -338,13 +338,13 @@ class DetallePlanillaController extends Controller
           ->where('tipo_planilla_tp_id','=',3)
           ->get()
           ->first();
-      
+
           //****FIN DE CARGA PLANILLA OCASIONAL****
 
         }elseif($tipocarga=="complementaria") {
 
           //****INICIO DE CARGA PLANILLA COMPLEMENTARIA****
-           
+
           while($a = fgetcsv($oa,1000, $cardelimitador)){
 
             //--DATOS PERSONALES--//
@@ -357,11 +357,11 @@ class DetallePlanillaController extends Controller
             $p_tip_doc=trim($a[10]);
             $p_num_doc=trim($a[11]);
             $nacionalidad_n_id=trim($a[12]);
-  
+
             $mifecha = explode("/", $p_fech_nac);
-            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
             $p_fech_nac= $lafecha;
-  
+
             //DATOS LABORALES
             $dp_cod_registro=ltrim($a[1]).trim($a[2]);
             $dp_cod_cargo=trim($a[2]);
@@ -396,52 +396,52 @@ class DetallePlanillaController extends Controller
             $regimen_laboral_rl_id=trim($a[58]);
             $dp_horas_adicionales= trim($a[57]);
             $dp_cod_nexus=mb_convert_encoding(trim($a[60]),"UTF-8","ISO-8859-1");
-            $dp_bruto=trim($a[61]);
-            $dp_afecto=trim($a[62]);
-            $dp_desc=trim($a[63]);
-            $dp_liquido=trim($a[64]);
-            $dp_essalud=trim($a[65]);
-  
+            $dp_bruto=trim($a[62]);
+            $dp_afecto=trim($a[63]);
+            $dp_desc=trim($a[64]);
+            $dp_liquido=trim($a[65]);
+            $dp_essalud=trim($a[66]);
+
             if(strlen($nivel_n_id)==1){
               $nivel_n_id='0'.$nivel_n_id;
             }
-  
+
             $mifecha = explode("/", $dp_fech_ini);
-            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
             $dp_fech_ini= $lafecha;
-  
+
             $mifecha = explode("/", $dp_fech_term);
-            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+            $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
             $dp_fech_term= $lafecha;
-  
+
             if($dp_fech_afi=='01/01/1900'){
               $dp_fech_afi= null;
             }else {
               $mifecha = explode("/", $dp_fech_afi);
-              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
               $dp_fech_afi= $lafecha;
             }
-  
+
             if($dp_fech_dev=='01/01/1900'){
               $dp_fech_dev= null;
             }else {
               $mifecha = explode("/", $dp_fech_dev);
-              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
               $dp_fech_dev= $lafecha;
             }
-  
+
             if($dp_fech_ini_lic=='01/01/1900'){
               $dp_fech_ini_lic= null;
             }else {
               $mifecha = explode("/", $dp_fech_ini_lic);
-              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0]; 
+              $lafecha=$mifecha[2]."-".$mifecha[1]."-".$mifecha[0];
               $dp_fech_ini_lic= $lafecha;
             }
-  
+
             if(strlen($dp_cuenta)==10) {
               $dp_cuenta="0".$dp_cuenta;
             }
-  
+
             //INSERTAR PERSONAL
             $personal = Personal::firstOrCreate(
               ['p_id' => $p_id],
@@ -455,7 +455,7 @@ class DetallePlanillaController extends Controller
               'p_num_doc' => $p_num_doc,
               'nacionalidad_n_id' => $nacionalidad_n_id],
             );
-  
+
              //INSERTAR DETALLE PLANILLA
             $detalle_planilla= new Detalleplanilla();
             $detalle_planilla->dp_cod_registro=$dp_cod_registro;
@@ -504,9 +504,9 @@ class DetallePlanillaController extends Controller
 
             //Conteo de registros
             $num_registros++;
-  
+
           }
-      
+
           //****FIN DE CARGA PLANILLA COMPLEMENTARIA****
 
         }
@@ -522,7 +522,7 @@ class DetallePlanillaController extends Controller
         $actualizarplanilla->pll_liquido = $sumatorias_planilla->dp_liquido;
         $actualizarplanilla->pll_essalud = $sumatorias_planilla->dp_essalud;
         $actualizarplanilla->save();
-  
+
         fclose($oa);
 
         return response()->json([
@@ -543,14 +543,14 @@ class DetallePlanillaController extends Controller
       ], 500);
       }
 
-      
+
     }
-  
+
     public function searchNoabono(Request $request)
     {
 
       try {
-        
+
         $num_doc=$request->num_doc;
 
         $select_planilla = Planilla::where('estado_planilla_ep_id','=',1)->first();
@@ -595,7 +595,7 @@ class DetallePlanillaController extends Controller
 
         Planillaconceptos::where('detalle_planilla_dp_id', $dp_id)
           ->update(['pcon_noabono' => 1]);
-        
+
           return response()->json([
             'status' => true,
             'message' => 'Registro correcto',
@@ -624,7 +624,7 @@ class DetallePlanillaController extends Controller
 
         Planillaconceptos::where('detalle_planilla_dp_id', $dp_id)
           ->update(['pcon_noabono' => 0]);
-        
+
           return response()->json([
             'status' => true,
             'message' => 'Registro Retirado',
@@ -661,14 +661,14 @@ class DetallePlanillaController extends Controller
         ], 500);
 
       }
-      
+
     }
 
     public function mostrarNoabono(Request $request)
     {
 
       try {
-        
+
         $pll_id=$request->pll_id;
 
         $personal= Personal::join('detalle_planilla','personal.p_id','detalle_planilla.personal_p_id')
@@ -718,7 +718,7 @@ class DetallePlanillaController extends Controller
         INNER JOIN conceptos on planilla_conceptos.conceptos_con_id=conceptos.con_id
         WHERE dp_id IN (SELECT dp_id FROM detalle_planilla WHERE dp_noabono=true)
         AND tipo_conceptos_tc_id=2 AND pll_id='".$pll_id."' GROUP BY con_id;";
- 
+
         $dataConceptos= DB::select($sqlDataconceptos);
 
         //Relacion No abono
@@ -812,14 +812,14 @@ class DetallePlanillaController extends Controller
           'message' => $th->getMessage()
       ], 500);
       }
-      
+
     }
 
     public function searchAutorizacion(Request $request)
     {
 
       try {
-        
+
         $num_doc=$request->num_doc;
 
         $personal= Personal::join('detalle_planilla','personal.p_id','detalle_planilla.personal_p_id')
@@ -907,7 +907,7 @@ class DetallePlanillaController extends Controller
         $numeracionrem=12;
         $numeracion = 1;
         $data=[];
-        
+
         $row = [];
         $row[0] = 'N°';
         $row[1] = 'ESTADO';
@@ -1032,7 +1032,7 @@ public function afpExcel(Request $request) {
       MAX(con_concepto) AS cod_concepto,
       MAX(con_nombre) AS con_nombre,
       SUM(pcon_monto) AS monto
-    FROM 
+    FROM
       planilla_conceptos
       INNER JOIN secuencia_funcional ON planilla_conceptos.secuencia_funcional_sf_id=secuencia_funcional.sf_id
       INNER JOIN clasificador ON planilla_conceptos.clasificador_cl_id=clasificador.cl_id
@@ -1044,7 +1044,7 @@ public function afpExcel(Request $request) {
     WHERE
       con_concepto='-0113'
       AND pll_id='".$num_id."'
-    GROUP BY 
+    GROUP BY
       ap_group,
       cl_clasificador,
       sf_secuencia_funcional;
@@ -1063,7 +1063,7 @@ public function afpExcel(Request $request) {
       $row[3] = $dataAfps->cod_concepto;
       $row[4] = $dataAfps->con_nombre;
       $row[5] = $dataAfps->monto;
-    
+
       $data[]=$row;
 
     }
@@ -1082,7 +1082,7 @@ public function afpExcel(Request $request) {
         'status' => false,
         'message' => $th->getMessage()
     ], 500);
-  }  
+  }
 
 }
 
@@ -1103,7 +1103,7 @@ public function pdtExcel(Request $request){
       $numeracionrem=12;
       $numeracion = 1;
       $data=[];
-      
+
       $row = [];
       $row[0] = 'N°';
       $row[1] = 'NUM_DOC';
@@ -1280,7 +1280,7 @@ public function pdtExcel(Request $request){
             if($resconceptosimprimir->conceptos_con_id=="73" ){
               $sumainasistencia = $sumainasistencia + $resconceptosimprimir->pcon_monto;
             }
-            
+
             if($resconceptosimprimir->conceptos_con_id=="51" ){
               $sumaaguinaldo = $sumaaguinaldo + $resconceptosimprimir->pcon_monto;
             }
@@ -1340,18 +1340,18 @@ public function fileide(Request $request) {
 
         //Variables
         $tipo_cocumento = "01";
-  
+
         //Formatear Numero de DNI
         if($planilla->p_tip_doc===5){
           $tipo_cocumento = "05";
         }
-  
+
         //Formatear Fecha
         $newDate = date("d/m/Y", strtotime($planilla->p_fech_nac));
-  
+
         //Formatear Sexo
         $newSexo = 1;
-        
+
         if ($planilla->sexo_p_sexo===1) {
           $newSexo = 2;
         }
@@ -1396,7 +1396,7 @@ public function fileide(Request $request) {
         $row[36] = '';
         $row[36] = '';
         $row[36] = 1;
-  
+
         $data[]=$row;
 
       }
@@ -1438,7 +1438,7 @@ public function filetra(Request $request) {
 
         //Variables
         $tipo_cocumento = "01";
-  
+
         //Formatear Numero de DNI
         if($planilla->p_tip_doc===5){
           $tipo_cocumento = "05";
@@ -1478,7 +1478,7 @@ public function filetra(Request $request) {
         $row[19] = 12;
         $row[20] = 0;
         $row[21] = '';
-  
+
         $data[]=$row;
 
       }
@@ -1519,7 +1519,7 @@ public function fileest(Request $request) {
 
         //Variables
         $tipo_cocumento = "01";
-  
+
         //Formatear Numero de DNI
         if($planilla->p_tip_doc===5){
           $tipo_cocumento = "05";
@@ -1530,7 +1530,7 @@ public function fileest(Request $request) {
         $row[2] = '604';
         $row[3] = '20334929281';
         $row[4] = '0000';
-  
+
         $data[]=$row;
 
       }
@@ -1571,7 +1571,7 @@ public function fileedu(Request $request) {
 
         //Variables
         $tipo_cocumento = "01";
-  
+
         //Formatear Numero de DNI
         if($planilla->p_tip_doc===5){
           $tipo_cocumento = "05";
@@ -1585,7 +1585,7 @@ public function fileedu(Request $request) {
         $row[5] = '';
         $row[6] = '';
         $row[7] = '';
-  
+
         $data[]=$row;
 
       }
@@ -1625,7 +1625,7 @@ public function fileper(Request $request) {
 
         //Variables
         $tipo_cocumento = "01";
-  
+
         //Formatear Numero de DNI
         if($planilla->p_tip_doc===5){
           $tipo_cocumento = "05";
@@ -1643,7 +1643,7 @@ public function fileper(Request $request) {
         $row[6] = '';
         $row[7] = '';
         $row[8] = '';
-  
+
         $data[]=$row;
 
       }
@@ -1751,8 +1751,8 @@ public function reporteExcel100(Request $request){
   ], 500);
   }
 
-  
+
 }
-  
-    
+
+
 }
