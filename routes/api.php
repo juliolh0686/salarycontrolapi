@@ -5,9 +5,13 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DetallePlanillaController;
+use App\Http\Controllers\ExpedientedocumentoController;
 use App\Http\Controllers\PlanillaconceptosController;
 use App\Http\Controllers\PlanillaController;
 use App\Http\Controllers\ConceptoController;
+use App\Http\Controllers\PadronPersonaController;
+use App\Http\Controllers\ExpedientenotaController;
+use App\Http\Controllers\PlanillamcppController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +33,13 @@ Route::post('login', [AuthController::class, 'loginUser']);
 
 //IMPORTACION DE PLANILLA
 Route::post('detalleplanilla/import149',[DetallePlanillaController::class,'import149'])->name('detalleplanilla.import149');
-Route::post('/planillaconceptos/import002rem',[PlanillaconceptosController::class,'import002rem'])->name('planillaconceptos.import002rem');
+Route::post('/planillaconceptos/import002rem',[PadronpersonaController::class,'import002rem'])->name('planillaconceptos.import002rem');
+
+//IMPORTACION SIAF
+Route::post('expedientenota/import',[ExpedientenotaController::class,'import'])->name('expedientenota.import');
+Route::post('expedientedocumento/import',[ExpedientedocumentoController::class,'import'])->name('expedientedocumento.import');
+Route::post('planillamcpp/import',[PlanillamcppController::class,'import'])->name('planillamcpp.import');
+Route::post('planillamcpp/listardepositos',[PlanillamcppController::class,'listardepositos'])->name('planillamcpp.listardepositos');
 
 //NO ABONOS
 Route::post('/noabonos/searchnoabono',[DetallePlanillaController::class,'searchNoabono'])->name('noabonos.searchnoabono');
