@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Padronpersona;
 use App\Models\Expedientedocumento;
+use App\Imports\PlanillaDataImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PlanillamcppController extends Controller
 {
@@ -17,38 +19,29 @@ class PlanillamcppController extends Controller
 
             //Rescatar el nombre
             $nom_archivo = $request->filename;
-            $num_doc_siaf = basename($nom_archivo, ".csv");
+            $num_doc_siaf = basename($nom_archivo, ".xlsx");
 
-
-            // Guardar el archivo en storage/app/public
-            $path = $request->file('file')->store('public');
-
-            // Obtener el nombre del archivo
-            $path_nombre = basename($path);
-
-            // Abrir el archivo
-            $carpeta = storage_path('app/public/');
-            $file = fopen($carpeta . $path_nombre, 'r');
-
-            if (!$file) {
-              throw new \Exception("No se pudo abrir el archivo.");
-            }
-
-            $limitador = ',';
             $contador = 0;
 
-            // Recorrer todas las filas
-            while ($registro = fgetcsv($file, 1000, $limitador)) {
-                // Procesar datos
-                $this->procesarPlanillasiaf($registro,$num_doc_siaf);
+            $import = new PlanillaDataImport;
+            $data = Excel::toCollection($import,request()->file('file'));
+
+            $datos = $data->first();
+
+            //Sacar el codigo expediente documento
+            $expediente_documento = Expedientedocumento::where('ed_num_doc', $num_doc_siaf)->first();
+            $idexpediente_documento = $expediente_documento->ed_id;
+
+            $expediente_documento_ed_id=$idexpediente_documento;
+
+            //return $expediente_documento_ed_id;
+
+
+            //Recorrer las filas a insertar
+            foreach ($datos->skip(1) as $fila) {
+                $this->procesarPlanillasiaf($fila,$expediente_documento_ed_id);
                 $contador++;
             }
-
-            // Cerrar el archivo
-            fclose($file);
-
-            // Eliminar el archivo después del procesamiento
-            Storage::delete($path);
 
             return response()->json([
                 'status' => true,
@@ -65,7 +58,7 @@ class PlanillamcppController extends Controller
           }
     }
 
-    private function procesarPlanillasiaf($data,$num_doc_siaf) {
+    private function procesarPlanillasiaf($data,$expediente_documento) {
 
         $pp_tip_doc=trim($data[7]);
         $pp_num_doc=trim($data[8]);
@@ -96,15 +89,10 @@ class PlanillamcppController extends Controller
 
         $padron_personas_pp_id= $idpadron_persona;
 
-        $expediente_documento = Expedientedocumento::where('ed_num_doc', $num_doc_siaf)->first();
-        $idexpediente_documento = $expediente_documento->ed_id;
-
-        $expediente_documento_ed_id= $idexpediente_documento;
-
         // // Insertar o actualizar datos utilizando el model binding de Laravel
 
         Planillamcpp::firstOrCreate(
-            ['padron_personas_pp_id' => $padron_personas_pp_id,'expediente_documento_ed_id' => $idexpediente_documento],
+            ['padron_personas_pp_id' => $padron_personas_pp_id,'expediente_documento_ed_id' => $expediente_documento],
             [
                 'pm_anio' => $pm_anio,
                 'pm_mes' => $pm_mes,
@@ -116,7 +104,7 @@ class PlanillamcppController extends Controller
                 'pm_banco' => $pm_banco,
                 'pm_cuenta' => $pm_cuenta,
                 'padron_personas_pp_id' => $padron_personas_pp_id,
-                'expediente_documento_ed_id' => $expediente_documento_ed_id
+                'expediente_documento_ed_id' => $expediente_documento
             ]
             );
     }
