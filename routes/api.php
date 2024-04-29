@@ -33,7 +33,7 @@ Route::post('login', [AuthController::class, 'loginUser']);
 
 //IMPORTACION DE PLANILLA
 Route::post('detalleplanilla/import149',[DetallePlanillaController::class,'import149'])->name('detalleplanilla.import149');
-Route::post('/planillaconceptos/import002rem',[PadronpersonaController::class,'import002rem'])->name('planillaconceptos.import002rem');
+Route::post('/planillaconceptos/import002rem',[PlanillaconceptosController::class,'import002rem'])->name('planillaconceptos.import002rem');
 
 //IMPORTACION SIAF
 Route::post('expedientenota/import',[ExpedientenotaController::class,'import'])->name('expedientenota.import');
