@@ -37,7 +37,7 @@ class PlanillaconceptosController extends Controller
       $datos = fread($file,filesize($carpeta.$path_nombre));
       $datos= preg_replace('[\n]','',$datos);
       $datos = mb_convert_encoding($datos,"UTF-8","ISO-8859-1");
-      
+
       if($tipo_planilla==3) {
         $datos = preg_replace("[--------------------------------------------------------------------------------------------------------------------------------------------------------]","|",$datos);
       }else {
@@ -68,7 +68,7 @@ class PlanillaconceptosController extends Controller
 
         if($pos === false && $pos2 == false ) {
 
-          
+
           if($tipo_planilla==3) {
             //EXTRAER CODIGO MODULAR
             $item_dni = strpos($lineas[$registros],"DNI");
@@ -85,12 +85,12 @@ class PlanillaconceptosController extends Controller
             $item_codcargo = strpos($lineas[$registros],"M IMPONIBLE :");
             $cod_cargo = substr($lineas[$registros],$item_codcargo+24,7);
           }
-         
+
           $cod_mod = str_replace(' ','',$cod_mod);
           $cod_cargo = str_replace(' ','',$cod_cargo);
 
           $cod_registro = $cod_mod.$cod_cargo;
-          
+
           $detalle_planilla = Detalleplanilla::join('planilla','detalle_planilla.planilla_pll_id','=','planilla.pll_id')
             ->join('tipo_servidor','detalle_planilla.tipo_servidor_ts_id','=','tipo_servidor.ts_id')
             ->join('nivel','detalle_planilla.nivel_n_id','=','nivel.n_id')
@@ -99,13 +99,14 @@ class PlanillaconceptosController extends Controller
             ->where('tipo_planilla_tp_id','=',$tipo_planilla)
             ->first();
 
-          
+
 
             if(!empty($detalle_planilla)) {
 
               $var_sec_fun=$detalle_planilla->sec_cod_sec_fun;
               $var_clasificador=$detalle_planilla->clasificador_cl_id;
 
+              //VERIFICAR SI SON PRSONAL ADMINISTRATIVO
               if ($detalle_planilla->tipo_servidor_ts_id==3 || $detalle_planilla->tipo_servidor_ts_id==4 || $detalle_planilla->tipo_servidor_ts_id==5 || $detalle_planilla->tipo_servidor_ts_id==6 || $detalle_planilla->tipo_servidor_ts_id==9 || $detalle_planilla->tipo_servidor_ts_id==11){
 
                 switch($detalle_planilla->nivel_n_id){
@@ -127,6 +128,7 @@ class PlanillaconceptosController extends Controller
 
               }
 
+              //VERIFICAR SI SON PRITE
               if ($detalle_planilla->establecimiento_est_id=='0H048015' || $detalle_planilla->establecimiento_est_id=='0H118010'){
                 $var_sec_fun=56;
               }
@@ -136,6 +138,7 @@ class PlanillaconceptosController extends Controller
                 $var_sec_fun=46;
               }
 
+              //TECNICO DEPORTIVOS
               if ($detalle_planilla->cargo_car_id==5016){
                 if($detalle_planilla->nivel_n_id=='02'){
                   $var_sec_fun = 47;
@@ -145,6 +148,7 @@ class PlanillaconceptosController extends Controller
                 }
               }
 
+              //ESSALUD ADMINISTRATIVOS Y DOCENTES
               if ($detalle_planilla->tipo_servidor_ts_id==3 || $detalle_planilla->tipo_servidor_ts_id==4 || $detalle_planilla->tipo_servidor_ts_id==5 || $detalle_planilla->tipo_servidor_ts_id==6 || $detalle_planilla->tipo_servidor_ts_id==9 || $detalle_planilla->tipo_servidor_ts_id==11){
                 $var_clasificador_essalud = 22;
               } else {
@@ -327,7 +331,7 @@ class PlanillaconceptosController extends Controller
           'message' => $th->getMessage()
         ], 500);
     }
-      
-      
+
+
   }
 }
