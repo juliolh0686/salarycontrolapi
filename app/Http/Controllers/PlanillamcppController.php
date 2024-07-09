@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Padronpersona;
 use App\Models\Expedientedocumento;
 use App\Imports\PlanillaDataImport;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PlanillamcppController extends Controller
@@ -124,6 +125,9 @@ class PlanillamcppController extends Controller
 
             $datos_personales=Padronpersona::where('pp_num_doc','=',$pp_num_doc)->first();
 
+            $newDate = DB::table('planillamcpp')->select('updated_at')->max('updated_at');
+            $fecha_actualizado = date('d-m-Y', strtotime($newDate));
+
 
 
         return [
@@ -136,7 +140,8 @@ class PlanillamcppController extends Controller
                 'to'            => $listado_personal->lastItem(),
             ],
             'listado_personal' => $listado_personal,
-            'datos_personales' => $datos_personales
+            'datos_personales' => $datos_personales,
+            'fecha_actualizado' => $fecha_actualizado
         ];
     }
 
