@@ -176,7 +176,7 @@ class PlanillaconceptosController extends Controller
                 $var_clasificador_con=$var_clasificador;
 
                 if($ub_concepto <> false){
-                  $monto_concepto = str_replace(',','',substr($lineas[$registros],$ub_concepto+14,10));
+                  $monto_concepto = str_replace(',','',substr($lineas[$registros],$ub_concepto+14,9));
 
                   if(is_numeric($monto_concepto)) {
 
