@@ -111,16 +111,16 @@ class PlanillaconceptosController extends Controller
 
                 switch($detalle_planilla->nivel_n_id){
                   case '01':
-                    $var_sec_fun=53;
+                    $var_sec_fun=106;
                     break;
                   case '02':
-                    $var_sec_fun=54;
+                    $var_sec_fun=107;
                     break;
                   case '03':
-                    $var_sec_fun=55;
+                    $var_sec_fun=108;
                     break;
                   case '09':
-                    $var_sec_fun=53;
+                    $var_sec_fun=106;
                     break;
                   default:
                   $var_sec_fun = $var_sec_fun;
@@ -130,21 +130,21 @@ class PlanillaconceptosController extends Controller
 
               //VERIFICAR SI SON PRITE
               if ($detalle_planilla->establecimiento_est_id=='0H048015' || $detalle_planilla->establecimiento_est_id=='0H118010'){
-                $var_sec_fun=56;
+                $var_sec_fun=109;
               }
 
               //PROFESOR EDUCACION FISICA
               if($detalle_planilla->cargo_car_id=='5021') {
-                $var_sec_fun=46;
+                $var_sec_fun=99;
               }
 
               //TECNICO DEPORTIVOS
               if ($detalle_planilla->cargo_car_id==5016){
                 if($detalle_planilla->nivel_n_id=='02'){
-                  $var_sec_fun = 47;
+                  $var_sec_fun = 100;
                 }
                 if($detalle_planilla->nivel_n_id=='03'){
-                  $var_sec_fun = 52;
+                  $var_sec_fun = 104;
                 }
               }
 
@@ -176,7 +176,7 @@ class PlanillaconceptosController extends Controller
                 $var_clasificador_con=$var_clasificador;
 
                 if($ub_concepto <> false){
-                  $monto_concepto = str_replace(',','',substr($lineas[$registros],$ub_concepto+14,9));
+                  $monto_concepto = str_replace(',','',substr($lineas[$registros],$ub_concepto+14,11));
 
                   if(is_numeric($monto_concepto)) {
 
@@ -246,31 +246,31 @@ class PlanillaconceptosController extends Controller
                     if ($itemsconceptos->concepto=='+231'){
                       switch ($detalle_planilla->nivel_n_id) {
                         case '01':
-                          $var_sec_fun_con=42;
+                          $var_sec_fun_con=96;
                           break;
                         case '02':
-                          $var_sec_fun_con=45;
+                          $var_sec_fun_con=98;
                           break;
                         case '03':
-                          $var_sec_fun_con=51;
+                          $var_sec_fun_con=103;
                           break;
                         case '04':
-                          $var_sec_fun_con=76;
+                          $var_sec_fun_con=120;
                           break;
                         case '05':
-                          $var_sec_fun_con=70;
+                          $var_sec_fun_con=118;
                           break;
                         case '07':
-                          $var_sec_fun_con=73;
+                          $var_sec_fun_con=121;
                           break;
                         case '08':
-                          $var_sec_fun_con=59;
+                          $var_sec_fun_con=111;
                           break;
                         case '09':
-                          $var_sec_fun_con=42;
+                          $var_sec_fun_con=96;
                           break;
                         case '00':
-                          $var_sec_fun_con=64;
+                          $var_sec_fun_con=115;
                           break;
                         default:
                           $var_sec_fun_con=$var_sec_fun_con;
